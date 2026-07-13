@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import type { HostAction } from '../../shared/types.ts';
 import { currentQuestion } from '../../shared/flow.ts';
-import { allAnswered } from '../../shared/presence.ts';
+import { allAnswered, onlineAnswered } from '../../shared/presence.ts';
 import { summarize } from '../../shared/aggregate.ts';
 import { api } from '../lib/api.ts';
 import { session } from '../lib/session.ts';
@@ -234,7 +234,7 @@ function Console({ code, hostKey }: { code: string; hostKey: string }) {
               <div className="card-pop mb-4 p-3">
                 <div className="mb-2 flex items-center justify-between">
                   <span className="text-sm font-extrabold text-ink-soft">
-                    {answeredPids.length} of {online.length} answered
+                    {onlineAnswered(snapshot.participants, answeredPids)} of {online.length} answered
                     {everyoneIn && online.length > 0 && <span className="ml-2">🎉 everyone’s in!</span>}
                   </span>
                   <div className="flex gap-2">

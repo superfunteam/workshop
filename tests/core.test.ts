@@ -112,3 +112,14 @@ describe('answer fixtures line up with config', () => {
     expect(answer('p1', 'q-choice', { picks: [0] }).pid).toBe('p1');
   });
 });
+
+describe('onlineAnswered', () => {
+  it('never exceeds the online count (ghost answers don’t inflate progress)', async () => {
+    const { onlineAnswered } = await import('../shared/presence.ts');
+    const now = 1_752_400_000_000;
+    const pub = publicParticipants(makeParticipants(now), now);
+    // p3 is offline but answered; p1 online answered; p2 online not answered
+    expect(onlineAnswered(pub, ['p1', 'p3'])).toBe(1);
+    expect(onlineAnswered(pub, ['p1', 'p2', 'p3'])).toBe(2);
+  });
+});

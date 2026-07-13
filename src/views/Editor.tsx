@@ -1,6 +1,6 @@
 // Author the workshop: sections, questions, presenter notes. Autosaves.
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import type { Question, QuestionType, Section, Snapshot } from '../../shared/types.ts';
 import { rid } from '../../shared/codes.ts';
@@ -20,6 +20,7 @@ export default function Editor({ code }: { code: string }) {
   const [draft, setDraft] = useState<Draft | null>(null);
   const [saveState, setSaveState] = useState<'saved' | 'saving' | 'dirty' | 'error'>('saved');
   const [missing, setMissing] = useState(false);
+  const hydrating = useRef(true);
   const saveTimer = useRef<number | undefined>(undefined);
 
   useEffect(() => {
@@ -32,31 +33,39 @@ export default function Editor({ code }: { code: string }) {
           setMissing(true);
           return;
         }
+        hydrating.current = true;
         setDraft({ name: snap.config.name, sections: snap.config.sections, autoReveal: snap.config.settings.autoReveal });
         session.touchRecent({ code, name: snap.config.name, role: 'host' });
       })
       .catch(() => setMissing(true));
   }, [code, hostKey]);
 
-  const scheduleSave = useCallback(
-    (next: Draft) => {
-      setDraft(next);
-      setSaveState('dirty');
+  // Debounced autosave: any draft change (except the initial load) saves ~800ms
+  // after the last keystroke.
+  useEffect(() => {
+    if (!draft) return;
+    if (hydrating.current) {
+      hydrating.current = false;
+      return;
+    }
+    setSaveState('dirty');
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    const snapshot = draft;
+    saveTimer.current = window.setTimeout(() => {
+      setSaveState('saving');
+      api
+        .saveConfig(code, hostKey ?? '', {
+          name: snapshot.name,
+          sections: snapshot.sections,
+          settings: { autoReveal: snapshot.autoReveal },
+        })
+        .then(() => setSaveState('saved'))
+        .catch(() => setSaveState('error'));
+    }, 800);
+    return () => {
       if (saveTimer.current) clearTimeout(saveTimer.current);
-      saveTimer.current = window.setTimeout(() => {
-        setSaveState('saving');
-        api
-          .saveConfig(code, hostKey ?? '', {
-            name: next.name,
-            sections: next.sections,
-            settings: { autoReveal: next.autoReveal },
-          })
-          .then(() => setSaveState('saved'))
-          .catch(() => setSaveState('error'));
-      }, 800);
-    },
-    [code, hostKey],
-  );
+    };
+  }, [draft, code, hostKey]);
 
   if (!hostKey) {
     return (
@@ -88,7 +97,7 @@ export default function Editor({ code }: { code: string }) {
   const joinUrl = `${location.origin}/${code}`;
   const hostUrl = `${location.origin}/host/${code}?key=${hostKey}`;
 
-  const update = (fn: (d: Draft) => Draft) => scheduleSave(fn(draft));
+  const update = (fn: (d: Draft) => Draft) => setDraft((prev) => (prev ? fn(prev) : prev));
 
   const moveIn = <T,>(list: T[], i: number, delta: number): T[] => {
     const j = i + delta;

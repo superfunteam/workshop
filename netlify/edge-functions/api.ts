@@ -273,6 +273,7 @@ async function hostAction(store: Store, code: string, body: Record<string, unkno
       const phase = action.phase;
       if (!['lobby', 'live', 'break', 'ended'].includes(phase)) return bad('bad phase');
       next.phase = phase;
+      next.timer = null; // a countdown never outlives the moment it was set for
       if (phase === 'ended') next.endedAt = now;
       if (phase === 'live') next.startedAt = state.startedAt ?? now;
       break;

@@ -31,7 +31,9 @@ export default function WordcloudInput({
             value={word}
             maxLength={24}
             autoFocus={i === 0}
-            onChange={(e) => setWords(words.map((w, j) => (j === i ? e.target.value.replace(/\s+/g, ' ') : w)))}
+            onChange={(e) =>
+              setWords((old) => old.map((w, j) => (j === i ? e.target.value.replace(/\s+/g, ' ') : w)))
+            }
           />
         ))}
       </div>

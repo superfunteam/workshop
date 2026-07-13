@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { AnswerValue, Snapshot } from '../../shared/types.ts';
 import { currentQuestion } from '../../shared/flow.ts';
-import { waitingOn } from '../../shared/presence.ts';
+import { onlineAnswered, waitingOn } from '../../shared/presence.ts';
 import { AVATARS } from '../../shared/emoji.ts';
 import { api } from '../lib/api.ts';
 import { session, type Identity } from '../lib/session.ts';
@@ -286,8 +286,8 @@ function QuestionStage({ code, snapshot, identity }: { code: string; snapshot: S
 
       {isBoard && !revealed && (
         <p className="mt-6 text-center text-sm font-semibold text-ink-soft">
-          {answeredPids.length} of {snapshot.participants.filter((p) => p.online).length} contributing —
-          boards reveal together 🤫
+          {onlineAnswered(snapshot.participants, answeredPids)} of{' '}
+          {snapshot.participants.filter((p) => p.online).length} contributing — boards reveal together 🤫
         </p>
       )}
 
@@ -296,7 +296,7 @@ function QuestionStage({ code, snapshot, identity }: { code: string; snapshot: S
           <div className="animate-pop-in text-7xl">🙌</div>
           <h2 className="display-type text-4xl">You’re in!</h2>
           <p className="font-hand text-3xl text-ink-soft">
-            waiting on the group — {answeredPids.length} of{' '}
+            waiting on the group — {onlineAnswered(snapshot.participants, answeredPids)} of{' '}
             {snapshot.participants.filter((p) => p.online).length} answered
           </p>
           {!question.anonymous && stillThinking.length > 0 && (

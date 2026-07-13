@@ -25,3 +25,13 @@ export function waitingOn(participants: PublicParticipant[], answeredPids: strin
   const answered = new Set(answeredPids);
   return participants.filter((p) => p.online && !answered.has(p.pid));
 }
+
+/**
+ * How many people currently in the room have answered. Someone who answered
+ * and then stepped away keeps their answer but leaves the count, so progress
+ * reads "2 of 3", never "4 of 3".
+ */
+export function onlineAnswered(participants: PublicParticipant[], answeredPids: string[]): number {
+  const answered = new Set(answeredPids);
+  return participants.filter((p) => p.online && answered.has(p.pid)).length;
+}

@@ -3,7 +3,7 @@
 
 import type { Snapshot } from '../../shared/types.ts';
 import { currentQuestion } from '../../shared/flow.ts';
-import { allAnswered, waitingOn } from '../../shared/presence.ts';
+import { allAnswered, onlineAnswered, waitingOn } from '../../shared/presence.ts';
 import { useRoom } from '../lib/useRoom.ts';
 import { useCelebrations } from '../lib/celebrate.ts';
 import ResultsView from '../components/results/index.tsx';
@@ -137,13 +137,15 @@ function LiveStage({ snapshot }: { snapshot: Snapshot }) {
         <div className="flex flex-1 flex-col items-center justify-center gap-8">
           <div className="w-full max-w-3xl">
             <div className="mb-3 flex justify-between font-display text-3xl font-extrabold">
-              <span>{answeredPids.length} in</span>
+              <span>{onlineAnswered(snapshot.participants, answeredPids)} in</span>
               <span className="text-ink-soft">{online.length} in the room</span>
             </div>
             <div className="h-10 w-full overflow-hidden rounded-full border-[3px] border-ink bg-white">
               <div
                 className="h-full rounded-full bg-mint transition-[width] duration-700 ease-out"
-                style={{ width: `${online.length ? Math.min(100, (answeredPids.length / online.length) * 100) : 0}%` }}
+                style={{
+                  width: `${online.length ? Math.min(100, (onlineAnswered(snapshot.participants, answeredPids) / online.length) * 100) : 0}%`,
+                }}
               />
             </div>
           </div>

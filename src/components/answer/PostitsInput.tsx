@@ -43,8 +43,8 @@ export default function PostitsInput({
   const add = (category: number) => {
     const text = drafts[category].trim();
     if (!text) return;
-    setDrafts(drafts.map((d, i) => (i === category ? '' : d)));
-    void save([...notes, { id: rid(8), category, text }]);
+    setDrafts((old) => old.map((d, i) => (i === category ? '' : d)));
+    void save([...latest.current, { id: rid(8), category, text }]);
   };
 
   const remove = (id: string) => void save(notes.filter((n) => n.id !== id));
@@ -93,7 +93,7 @@ export default function PostitsInput({
                 placeholder="Add a note…"
                 value={drafts[ci]}
                 maxLength={280}
-                onChange={(e) => setDrafts(drafts.map((d, i) => (i === ci ? e.target.value : d)))}
+                onChange={(e) => setDrafts((old) => old.map((d, i) => (i === ci ? e.target.value : d)))}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') add(ci);
                 }}

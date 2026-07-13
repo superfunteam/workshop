@@ -10,8 +10,7 @@
 
 # The edge function declares its own path via `export const config` in
 # netlify/edge-functions/api.ts — declaring it here too would register it twice.
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+#
+# The SPA fallback lives in public/_redirects (shipped inside the built dist/)
+# rather than here: netlify dev applies toml redirects BEFORE proxying to the
+# Vite dev server, which would swallow Vite's module URLs in local dev.
