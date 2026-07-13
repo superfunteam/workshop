@@ -31,7 +31,7 @@ export default function SliderResults({ question, answers, participants, big }: 
         <span>{question.right} →</span>
       </div>
       <div className="relative mx-4">
-        <div className={`w-full overflow-hidden rounded-full border-[2.5px] border-ink bg-white ${big ? 'h-7' : 'h-5'}`}>
+        <div className={`w-full overflow-hidden rounded-full border border-line bg-white ${big ? 'h-7' : 'h-5'}`}>
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${stats.average}%` }}

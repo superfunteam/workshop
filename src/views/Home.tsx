@@ -4,6 +4,7 @@ import { api } from '../lib/api.ts';
 import { session } from '../lib/session.ts';
 import { starterSections } from '../lib/template.ts';
 import { normalizeCode } from '../../shared/codes.ts';
+import AnimatedEmoji from '../components/AnimatedEmoji.tsx';
 
 export default function Home() {
   const nav = useNavigate();
@@ -32,8 +33,8 @@ export default function Home() {
   return (
     <div className="mx-auto flex min-h-dvh max-w-4xl flex-col px-6 py-10">
       <header className="mb-12 text-center">
-        <div className="animate-wiggle inline-block text-6xl" aria-hidden>
-          🏕️
+        <div className="inline-block" aria-hidden>
+          <AnimatedEmoji emoji="🏕️" size={88} />
         </div>
         <h1 className="display-type mt-2 text-6xl sm:text-7xl">Workshop</h1>
         <p className="mt-3 font-semibold text-xl text-ink-soft">

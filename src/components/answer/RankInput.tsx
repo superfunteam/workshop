@@ -45,7 +45,7 @@ export default function RankInput({
               aria-pressed={ranked}
             >
               <span
-                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-[2.5px] border-ink font-display text-xl font-extrabold ${
+                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-line font-display text-xl font-extrabold ${
                   ranked ? 'bg-ink text-white' : 'bg-white text-ink-faint'
                 }`}
               >

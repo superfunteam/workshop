@@ -71,7 +71,7 @@ export function SyncDot({ status }: { status: SyncStatus }) {
   const s = STATUS_LABEL[status];
   return (
     <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-ink-soft">
-      <span className={`inline-block h-2.5 w-2.5 rounded-full border border-ink/40 ${s.dot}`} />
+      <span className={`inline-block h-2.5 w-2.5 rounded-full border border-ink/20 ${s.dot}`} />
       {s.text}
     </span>
   );
@@ -79,7 +79,7 @@ export function SyncDot({ status }: { status: SyncStatus }) {
 
 export function EmptyHint({ children }: { children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl border-2 border-dashed border-ink-faint px-6 py-8 text-center font-semibold text-lg text-ink-soft">
+    <div className="rounded-2xl border border-dashed border-ink-faint px-6 py-8 text-center font-semibold text-lg text-ink-soft">
       {children}
     </div>
   );

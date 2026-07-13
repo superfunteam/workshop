@@ -9,6 +9,7 @@ import { onlineAnswered, waitingOn } from '../../shared/presence.ts';
 import { AVATARS } from '../../shared/emoji.ts';
 import { BOUNCE, SLIDE, popChild, staggerParent } from '../lib/springs.ts';
 import { DiscussMoment, SlideMoment } from '../components/TalkMoment.tsx';
+import AnimatedEmoji from '../components/AnimatedEmoji.tsx';
 import { api } from '../lib/api.ts';
 import { session, type Identity } from '../lib/session.ts';
 import { useRoom } from '../lib/useRoom.ts';
@@ -103,7 +104,7 @@ function JoinScreen({ code, onJoined }: { code: string; onJoined: (id: Identity)
                 type="button"
                 onClick={() => setAvatar(a)}
                 className={`rounded-xl border-2 p-1.5 text-2xl ${
-                  avatar === a ? 'border-ink bg-sun shadow-pop-sm' : 'border-transparent'
+                  avatar === a ? 'border-sun bg-sun/60 shadow-pop-sm' : 'border-transparent'
                 }`}
                 aria-pressed={avatar === a}
                 aria-label={`avatar ${a}`}
@@ -184,7 +185,7 @@ function PhaseBody({ code, snapshot, identity }: { code: string; snapshot: Snaps
   if (state.phase === 'lobby') {
     return (
       <Centered>
-        <div className="animate-wiggle text-7xl">🏕️</div>
+        <AnimatedEmoji emoji="🏕️" size={96} />
         <h1 className="display-type text-4xl">You’re in!</h1>
         <p className="font-semibold text-xl text-ink-soft">hang tight — the host will kick things off</p>
         <div className="mt-4 flex max-w-md flex-wrap justify-center gap-2">
@@ -200,7 +201,7 @@ function PhaseBody({ code, snapshot, identity }: { code: string; snapshot: Snaps
   if (state.phase === 'break') {
     return (
       <Centered>
-        <div className="text-7xl">☕</div>
+        <AnimatedEmoji emoji="☕" size={96} />
         <h1 className="display-type text-5xl">Break time</h1>
         <p className="font-semibold text-xl text-ink-soft">stretch those legs — we’ll be right here</p>
       </Centered>
@@ -210,7 +211,7 @@ function PhaseBody({ code, snapshot, identity }: { code: string; snapshot: Snaps
   if (state.phase === 'ended') {
     return (
       <Centered>
-        <div className="text-7xl">🎬</div>
+        <AnimatedEmoji emoji="🎬" size={96} />
         <h1 className="display-type text-5xl">That’s a wrap!</h1>
         <p className="font-semibold text-xl text-ink-soft">thanks for making it a good one, {identity.name}</p>
         <Link to={`/recap/${code}`} className="btn-pop bg-sun mt-4 text-lg">
@@ -329,9 +330,8 @@ function QuestionStage({ code, snapshot, identity }: { code: string; snapshot: S
               initial={{ scale: 0, rotate: -20 }}
               animate={{ scale: 1, rotate: 0 }}
               transition={BOUNCE}
-              className="text-7xl"
             >
-              🙌
+              <AnimatedEmoji emoji="🙌" size={96} />
             </motion.div>
             <motion.h2 variants={popChild} className="display-type text-4xl">
               You’re in!

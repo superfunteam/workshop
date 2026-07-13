@@ -42,12 +42,12 @@ export default function BarResults({
               {t.count} <span className="text-ink-soft text-[0.7em] font-sans font-semibold">{unit}</span>
             </span>
           </div>
-          <div className={`w-full overflow-hidden rounded-full border-[2.5px] border-ink bg-white ${big ? 'h-9' : 'h-6'}`}>
+          <div className={`w-full overflow-hidden rounded-full border border-line bg-white ${big ? 'h-9' : 'h-6'}`}>
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${(t.count / max) * 100}%` }}
               transition={{ ...SLIDE, delay: 0.1 + rank * 0.07 }}
-              className="h-full rounded-full border-r-[2.5px] border-ink"
+              className="h-full rounded-full border-r border-line"
               style={{
                 background: dataColor(t.index),
                 borderRightWidth: t.count === 0 ? 0 : undefined,

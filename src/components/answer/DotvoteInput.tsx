@@ -54,7 +54,7 @@ export default function DotvoteInput({
       <div className="flex w-full flex-col gap-3">
         {question.options.map((option, i) => (
           <div key={i} className="card-pop flex items-center gap-3 px-4 py-3">
-            <span className="h-4 w-4 shrink-0 rounded-full border-2 border-ink" style={{ background: dataColor(i) }} />
+            <span className="h-4 w-4 shrink-0 rounded-full border border-line" style={{ background: dataColor(i) }} />
             <span className="flex-1 font-display text-lg font-bold">{option}</span>
             <span className="min-w-20 text-right text-xl tracking-wider" aria-label={`${dots[i]} dots`}>
               {dots[i] === 0 ? (

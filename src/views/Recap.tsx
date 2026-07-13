@@ -106,7 +106,7 @@ export default function RecapView({ code }: { code: string }) {
 
       {snap.config.sections.map((sec) => (
         <section key={sec.id} className="mb-12">
-          <h2 className="display-type mb-6 border-b-4 border-ink pb-2 text-3xl">{sec.title}</h2>
+          <h2 className="display-type mb-6 border-b-2 border-line pb-2 text-3xl">{sec.title}</h2>
           <div className="flex flex-col gap-10">
             {sec.questions.map((q) => (
               <article key={q.id}>

@@ -2,6 +2,7 @@
 // corner with the sender's name, on every screen in the room.
 
 import { useEffect, useRef, useState } from 'react';
+import AnimatedEmoji from './AnimatedEmoji.tsx';
 import type { EmoteEvent } from '../../shared/types.ts';
 
 interface Floater extends EmoteEvent {
@@ -46,8 +47,8 @@ export default function EmoteLayer({ emotes }: { emotes: EmoteEvent[] }) {
           className="animate-float-up absolute bottom-0 flex flex-col items-center gap-0.5"
           style={{ left: f.lane, ['--drift' as string]: `${f.drift}px` }}
         >
-          <span className="text-4xl drop-shadow-sm">{f.emoji}</span>
-          <span className="rounded-full border-2 border-ink bg-white px-2 py-0.5 text-[11px] font-bold shadow-pop-sm whitespace-nowrap">
+          <AnimatedEmoji emoji={f.emoji} size={44} className="drop-shadow-sm" />
+          <span className="rounded-full border border-line bg-white px-2 py-0.5 text-[11px] font-bold shadow-pop-sm whitespace-nowrap">
             {f.avatar} {f.name}
           </span>
         </div>

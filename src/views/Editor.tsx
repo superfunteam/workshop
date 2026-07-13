@@ -219,7 +219,7 @@ export default function Editor({ code }: { code: string }) {
         + Add a section
       </button>
 
-      <footer className="mt-12 flex items-center justify-between border-t-2 border-dashed border-ink-faint pt-6">
+      <footer className="mt-12 flex items-center justify-between border-t border-dashed border-ink-faint pt-6">
         <button
           type="button"
           className="btn-pop text-sm"
@@ -327,7 +327,7 @@ function AddQuestion({ onAdd }: { onAdd: (t: QuestionType) => void }) {
             <button
               key={type}
               type="button"
-              className="cursor-pointer rounded-xl border-2 border-ink bg-white p-2.5 text-left transition-all hover:-translate-y-0.5 hover:shadow-pop-sm"
+              className="cursor-pointer rounded-xl border border-line bg-white p-2.5 text-left transition-all hover:-translate-y-0.5 hover:shadow-pop-sm"
               onClick={() => {
                 onAdd(type);
                 setOpen(false);
@@ -368,7 +368,7 @@ function QuestionCard({
   const meta = TYPE_META[question.type];
 
   return (
-    <div className="rounded-2xl border-2 border-ink bg-white">
+    <div className="rounded-2xl border border-line bg-white">
       <div className="flex items-center gap-2 p-3">
         <span title={meta.label}>{meta.emoji}</span>
         <button type="button" className="min-w-0 flex-1 cursor-pointer truncate text-left font-semibold" onClick={() => setOpen(!open)}>

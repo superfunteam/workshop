@@ -7,6 +7,7 @@ import { currentQuestion } from '../../shared/flow.ts';
 import { allAnswered, onlineAnswered, waitingOn } from '../../shared/presence.ts';
 import { SLIDE } from '../lib/springs.ts';
 import { DiscussMoment, SlideMoment } from '../components/TalkMoment.tsx';
+import AnimatedEmoji from '../components/AnimatedEmoji.tsx';
 import { useRoom } from '../lib/useRoom.ts';
 import { useCelebrations } from '../lib/celebrate.ts';
 import ResultsView from '../components/results/index.tsx';
@@ -62,7 +63,7 @@ export default function StageView({ code }: { code: string }) {
 
       {state.phase === 'break' && (
         <div className="flex flex-1 flex-col items-center justify-center gap-6 text-center">
-          <div className="animate-wiggle text-9xl">☕</div>
+          <AnimatedEmoji emoji="☕" size={160} />
           <h1 className="display-type text-8xl">Break time</h1>
           <p className="font-semibold text-2xl text-ink-soft">back soon — the room stays open</p>
         </div>
@@ -70,7 +71,7 @@ export default function StageView({ code }: { code: string }) {
 
       {state.phase === 'ended' && (
         <div className="flex flex-1 flex-col items-center justify-center gap-6 text-center">
-          <div className="text-9xl">🎬</div>
+          <AnimatedEmoji emoji="🎬" size={160} />
           <h1 className="display-type text-8xl">That’s a wrap!</h1>
           <p className="font-semibold text-2xl text-ink-soft">thank you, {config.name} crew</p>
         </div>
@@ -87,7 +88,7 @@ export default function StageView({ code }: { code: string }) {
           </span>
         </div>
         {state.phase !== 'lobby' && (
-          <div className="flex items-center gap-3 rounded-2xl border-[2.5px] border-ink bg-white p-2.5 shadow-pop-sm">
+          <div className="flex items-center gap-3 rounded-2xl border border-line bg-white p-2.5 shadow-pop-sm">
             <QR url={joinUrl} size={84} />
             <div className="pr-2 text-left">
               <div className="text-[11px] font-extrabold tracking-wide text-ink-soft uppercase">late? join in</div>
@@ -174,7 +175,7 @@ function LiveStage({ snapshot }: { snapshot: Snapshot }) {
               <span>{onlineAnswered(snapshot.participants, answeredPids)} in</span>
               <span className="text-ink-soft">{online.length} in the room</span>
             </div>
-            <div className="h-10 w-full overflow-hidden rounded-full border-[3px] border-ink bg-white">
+            <div className="h-10 w-full overflow-hidden rounded-full border border-line bg-white">
               <div
                 className="h-full rounded-full bg-mint transition-[width] duration-700 ease-out"
                 style={{

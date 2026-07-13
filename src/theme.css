@@ -31,12 +31,13 @@
   --color-note-lilac: #ddd0ff;
   --color-note-peach: #ffdcb4;
 
-  --font-display: 'Bricolage Grotesque Variable', 'Bricolage Grotesque', sans-serif;
+  --font-display: 'Outfit Variable', 'Outfit', sans-serif;
   --font-sans: 'Outfit Variable', 'Outfit', sans-serif;
 
-  --shadow-pop: 0.25rem 0.25rem 0 0 var(--color-ink);
-  --shadow-pop-sm: 0.1875rem 0.1875rem 0 0 var(--color-ink);
-  --shadow-pop-lg: 0.4rem 0.4rem 0 0 var(--color-ink);
+  /* Soft, lifted shadows — fun lives in the color and motion, not the ink. */
+  --shadow-pop: 0 10px 24px -10px rgb(35 33 27 / 0.18), 0 2px 6px -2px rgb(35 33 27 / 0.08);
+  --shadow-pop-sm: 0 4px 12px -4px rgb(35 33 27 / 0.16);
+  --shadow-pop-lg: 0 22px 48px -16px rgb(35 33 27 / 0.22);
 
   --radius-blob: 1.25rem;
 
@@ -56,8 +57,8 @@ html {
 
 body {
   /* Corkboard-lite: a whisper of dot grid so the paper feels physical. */
-  background-image: radial-gradient(circle, rgb(35 33 27 / 0.055) 1px, transparent 1px);
-  background-size: 22px 22px;
+  background-image: radial-gradient(circle, rgb(35 33 27 / 0.03) 1px, transparent 1px);
+  background-size: 26px 26px;
   min-height: 100dvh;
 }
 
@@ -70,7 +71,7 @@ body {
 
 @utility card-pop {
   background: var(--color-card);
-  border: 2.5px solid var(--color-ink);
+  border: 1px solid var(--color-line);
   border-radius: var(--radius-blob);
   box-shadow: var(--shadow-pop);
 }
@@ -82,25 +83,25 @@ body {
   gap: 0.5rem;
   font-family: var(--font-display);
   font-weight: 700;
-  border: 2.5px solid var(--color-ink);
+  border: 1px solid var(--color-line);
   border-radius: 999px;
   box-shadow: var(--shadow-pop-sm);
-  background: var(--color-card);
+  background: white;
   color: var(--color-ink);
   padding: 0.55rem 1.15rem;
   cursor: pointer;
   user-select: none;
-  transition: transform 0.06s ease, box-shadow 0.06s ease, background-color 0.15s ease;
+  transition: transform 0.08s ease, box-shadow 0.12s ease, background-color 0.15s ease;
 }
 
 .btn-pop:hover:not(:disabled) {
-  transform: translate(-1px, -1px);
-  box-shadow: 0.3rem 0.3rem 0 0 var(--color-ink);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px -8px rgb(35 33 27 / 0.28);
 }
 
 .btn-pop:active:not(:disabled) {
-  transform: translate(2px, 2px);
-  box-shadow: 0.05rem 0.05rem 0 0 var(--color-ink);
+  transform: translateY(1px) scale(0.98);
+  box-shadow: 0 2px 6px -2px rgb(35 33 27 / 0.2);
 }
 
 .btn-pop:disabled {
@@ -109,18 +110,20 @@ body {
 }
 
 @utility input-pop {
-  border: 2.5px solid var(--color-ink);
+  border: 1px solid var(--color-line);
   border-radius: 0.9rem;
   background: white;
   padding: 0.6rem 0.9rem;
   font-family: var(--font-sans);
   color: var(--color-ink);
   outline: none;
-  transition: box-shadow 0.12s ease;
+  box-shadow: 0 1px 3px -1px rgb(35 33 27 / 0.08);
+  transition: box-shadow 0.12s ease, border-color 0.12s ease;
 }
 
 .input-pop:focus {
-  box-shadow: 0.2rem 0.2rem 0 0 var(--color-sun), 0.2rem 0.2rem 0 2.5px var(--color-ink);
+  border-color: var(--color-sun);
+  box-shadow: 0 0 0 3.5px rgb(255 210 63 / 0.35);
 }
 
 .input-pop::placeholder {
@@ -131,12 +134,13 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  border: 2px solid var(--color-ink);
+  border: 1px solid var(--color-line);
   border-radius: 999px;
   padding: 0.2rem 0.7rem;
   font-weight: 600;
   font-size: 0.85rem;
   background: white;
+  box-shadow: 0 1px 3px -1px rgb(35 33 27 / 0.06);
 }
 
 /* Sticky notes — believable tilt, folded corner. */
@@ -146,8 +150,8 @@ body {
   font-size: 1rem;
   line-height: 1.3;
   padding: 0.9rem 1rem 1.1rem;
-  border-radius: 2px 2px 14px 2px;
-  box-shadow: 2px 3px 0 0 rgb(35 33 27 / 0.28);
+  border-radius: 4px 4px 14px 4px;
+  box-shadow: 0 5px 12px -5px rgb(35 33 27 / 0.28);
   transform: rotate(var(--tilt, -1.5deg));
   transition: transform 0.15s ease, box-shadow 0.15s ease;
   overflow-wrap: anywhere;
@@ -155,7 +159,7 @@ body {
 
 .sticky-note:hover {
   transform: rotate(0deg) scale(1.04);
-  box-shadow: 3px 5px 0 0 rgb(35 33 27 / 0.32);
+  box-shadow: 0 10px 20px -8px rgb(35 33 27 / 0.32);
   z-index: 5;
 }
 
@@ -213,10 +217,10 @@ body {
 
 @keyframes pulse-ring {
   0% {
-    box-shadow: 0.1875rem 0.1875rem 0 0 var(--color-ink), 0 0 0 0 rgb(228 87 61 / 0.65);
+    box-shadow: var(--shadow-pop-sm), 0 0 0 0 rgb(228 87 61 / 0.5);
   }
   100% {
-    box-shadow: 0.1875rem 0.1875rem 0 0 var(--color-ink), 0 0 0 14px rgb(228 87 61 / 0);
+    box-shadow: var(--shadow-pop-sm), 0 0 0 12px rgb(228 87 61 / 0);
   }
 }
 
@@ -253,10 +257,11 @@ body {
 .slider-fat {
   appearance: none;
   height: 22px;
-  border: 2.5px solid var(--color-ink);
+  border: 1px solid var(--color-line);
   border-radius: 999px;
   background: linear-gradient(90deg, var(--color-note-sky), var(--color-card), var(--color-note-pink));
   cursor: pointer;
+  box-shadow: inset 0 1px 3px rgb(35 33 27 / 0.08);
 }
 
 .slider-fat::-webkit-slider-thumb {
@@ -265,8 +270,8 @@ body {
   height: 42px;
   border-radius: 999px;
   background: var(--color-sun);
-  border: 3px solid var(--color-ink);
-  box-shadow: 0.15rem 0.15rem 0 0 var(--color-ink);
+  border: 3px solid white;
+  box-shadow: 0 4px 12px -3px rgb(35 33 27 / 0.35);
   cursor: grab;
   transition: transform 0.1s ease;
 }
@@ -285,17 +290,17 @@ body {
   height: 42px;
   border-radius: 999px;
   background: var(--color-sun);
-  border: 3px solid var(--color-ink);
-  box-shadow: 0.15rem 0.15rem 0 0 var(--color-ink);
+  border: 3px solid white;
+  box-shadow: 0 4px 12px -3px rgb(35 33 27 / 0.35);
   cursor: grab;
 }
 
 /* Big display type helper */
 @utility display-type {
   font-family: var(--font-display);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  line-height: 1.04;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.06;
   text-wrap: balance;
 }
 

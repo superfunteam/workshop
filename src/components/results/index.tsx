@@ -25,7 +25,7 @@ export function AuthorChip({ participants, pid }: { participants: PublicParticip
   const p = personFor(participants, pid);
   if (!p) return null;
   return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-white/85 px-1.5 py-0.5 text-[11px] font-bold border border-ink/25">
+    <span className="inline-flex items-center gap-1 rounded-full bg-white/85 px-1.5 py-0.5 text-[11px] font-bold border border-line">
       <span aria-hidden>{p.avatar}</span> {p.name}
     </span>
   );

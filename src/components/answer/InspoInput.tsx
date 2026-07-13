@@ -134,7 +134,7 @@ export default function InspoInput({
             <button
               type="button"
               onClick={() => remove(item.id)}
-              className="absolute -top-2 -right-2 hidden h-7 w-7 cursor-pointer items-center justify-center rounded-full border-2 border-ink bg-white text-xs group-hover:flex"
+              className="absolute -top-2 -right-2 hidden h-7 w-7 cursor-pointer items-center justify-center rounded-full border border-line bg-white text-xs group-hover:flex"
               aria-label="remove pin"
             >
               ✕

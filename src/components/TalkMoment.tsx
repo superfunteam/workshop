@@ -2,6 +2,7 @@
 // springy on participant, host, and stage alike.
 
 import { motion } from 'motion/react';
+import AnimatedEmoji from './AnimatedEmoji.tsx';
 import type { DiscussQuestion, SlideQuestion } from '../../shared/types.ts';
 import { BOUNCE, SLIDE } from '../lib/springs.ts';
 
@@ -13,10 +14,9 @@ export function SlideMoment({ question, big }: { question: SlideQuestion; big?: 
           initial={{ scale: 0, rotate: -14 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ ...BOUNCE, delay: 0.05 }}
-          className={big ? 'text-9xl' : 'text-7xl'}
           aria-hidden
         >
-          {question.emoji}
+          <AnimatedEmoji emoji={question.emoji} size={big ? 144 : 96} />
         </motion.div>
       )}
       <motion.h1
@@ -62,10 +62,9 @@ export function DiscussMoment({
         initial={{ scale: 0 }}
         animate={{ scale: 1, rotate: [0, -6, 5, 0] }}
         transition={BOUNCE}
-        className={big ? 'text-8xl' : 'text-6xl'}
         aria-hidden
       >
-        🗣️
+        <AnimatedEmoji emoji="🗣️" size={big ? 128 : 88} />
       </motion.div>
       <motion.p
         initial={{ opacity: 0, y: 14 }}

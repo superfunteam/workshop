@@ -130,7 +130,7 @@ function Console({ code, hostKey }: { code: string; hostKey: string }) {
   return (
     <div className="flex h-dvh flex-col overflow-hidden">
       {/* top bar */}
-      <header className="flex flex-wrap items-center gap-2 border-b-[2.5px] border-ink bg-card px-4 py-2.5">
+      <header className="flex flex-wrap items-center gap-2 border-b border-line bg-card px-4 py-2.5">
         <span className="font-display text-lg font-extrabold">{config.name}</span>
         <span className="chip bg-sun/50 font-mono tracking-widest">{code}</span>
         <SyncDot status={status} />
@@ -190,7 +190,7 @@ function Console({ code, hostKey }: { code: string; hostKey: string }) {
 
       <div className="flex min-h-0 flex-1">
         {/* question rail */}
-        <nav className="w-64 shrink-0 overflow-y-auto border-r-[2.5px] border-ink bg-paper/60 p-3">
+        <nav className="w-64 shrink-0 overflow-y-auto border-r border-line bg-paper/60 p-3">
           {config.sections.map((sec, sIdx) => (
             <div key={sec.id} className="mb-4">
               <div className="mb-1.5 px-1 font-display text-xs font-extrabold tracking-wide text-ink-soft uppercase">
@@ -212,7 +212,7 @@ function Console({ code, hostKey }: { code: string; hostKey: string }) {
                         <motion.span
                           layoutId="rail-pill"
                           transition={SLIDE}
-                          className="absolute inset-0 rounded-xl border-2 border-ink bg-sun shadow-pop-sm"
+                          className="absolute inset-0 rounded-xl border border-line bg-sun shadow-pop-sm"
                         />
                       )}
                       <span className={`relative line-clamp-2 ${isCurrent ? '' : 'opacity-80'}`}>{q.prompt}</span>
@@ -297,7 +297,7 @@ function Console({ code, hostKey }: { code: string; hostKey: string }) {
                           onClick={() => {
                             if (confirm(`Remove ${p.name} from the room count?`)) void act({ action: 'remove', pid: p.pid });
                           }}
-                          className="absolute -top-1.5 -right-1.5 hidden h-4 w-4 cursor-pointer items-center justify-center rounded-full border border-ink bg-white text-[9px] group-hover:flex"
+                          className="absolute -top-1.5 -right-1.5 hidden h-4 w-4 cursor-pointer items-center justify-center rounded-full border border-line bg-white text-[9px] group-hover:flex"
                         >
                           ✕
                         </button>
@@ -442,8 +442,8 @@ function NotesDock({ notes, scratch, onScratch }: { notes: string; scratch: stri
   };
 
   return (
-    <footer className="grid h-44 shrink-0 grid-cols-2 border-t-[2.5px] border-ink bg-card">
-      <div className="flex flex-col overflow-hidden border-r-[2.5px] border-ink p-3">
+    <footer className="grid h-44 shrink-0 grid-cols-2 border-t border-line bg-card">
+      <div className="flex flex-col overflow-hidden border-r border-line p-3">
         <div className="mb-1 text-xs font-extrabold tracking-wide text-ink-soft uppercase">📋 Your notes for this question</div>
         <div className="flex-1 overflow-y-auto text-base leading-relaxed whitespace-pre-wrap">
           {notes || <span className="text-ink-faint">no presenter notes on this one — add them in the editor</span>}

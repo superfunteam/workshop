@@ -11,5 +11,5 @@ export default function QR({ url, size = 180 }: { url: string; size?: number }) 
       color: { dark: '#23211b', light: '#ffffff' },
     });
   }, [url, size]);
-  return <canvas ref={ref} className="rounded-xl border-[2.5px] border-ink bg-white" aria-label={`QR code for ${url}`} />;
+  return <canvas ref={ref} className="rounded-xl border border-line bg-white" aria-label={`QR code for ${url}`} />;
 }
