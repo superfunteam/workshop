@@ -41,9 +41,9 @@ export default function StageView({ code }: { code: string }) {
           <div className="flex items-center gap-10">
             <QR url={joinUrl} size={220} />
             <div className="text-left">
-              <p className="font-hand text-4xl text-ink-soft">join at</p>
+              <p className="font-semibold text-2xl text-ink-soft">join at</p>
               <p className="font-display text-4xl font-extrabold">{location.host}</p>
-              <p className="mt-3 font-hand text-4xl text-ink-soft">room code</p>
+              <p className="mt-3 font-semibold text-2xl text-ink-soft">room code</p>
               <p className="font-display text-7xl font-extrabold tracking-[0.2em]">{code}</p>
             </div>
           </div>
@@ -54,7 +54,7 @@ export default function StageView({ code }: { code: string }) {
               </span>
             ))}
           </div>
-          <p className="font-hand text-3xl text-ink-soft">
+          <p className="font-semibold text-xl text-ink-soft">
             {online.length === 0 ? 'scan in — first one gets bragging rights' : `${online.length} in the room`}
           </p>
         </div>
@@ -64,7 +64,7 @@ export default function StageView({ code }: { code: string }) {
         <div className="flex flex-1 flex-col items-center justify-center gap-6 text-center">
           <div className="animate-wiggle text-9xl">☕</div>
           <h1 className="display-type text-8xl">Break time</h1>
-          <p className="font-hand text-4xl text-ink-soft">back soon — the room stays open</p>
+          <p className="font-semibold text-2xl text-ink-soft">back soon — the room stays open</p>
         </div>
       )}
 
@@ -72,7 +72,7 @@ export default function StageView({ code }: { code: string }) {
         <div className="flex flex-1 flex-col items-center justify-center gap-6 text-center">
           <div className="text-9xl">🎬</div>
           <h1 className="display-type text-8xl">That’s a wrap!</h1>
-          <p className="font-hand text-4xl text-ink-soft">thank you, {config.name} crew</p>
+          <p className="font-semibold text-2xl text-ink-soft">thank you, {config.name} crew</p>
         </div>
       )}
 
@@ -108,7 +108,7 @@ function LiveStage({ snapshot }: { snapshot: Snapshot }) {
   if (!flat) {
     return (
       <div className="flex flex-1 items-center justify-center">
-        <p className="font-hand text-5xl text-ink-soft">lining up the next question…</p>
+        <p className="font-semibold text-3xl text-ink-soft">lining up the next question…</p>
       </div>
     );
   }
@@ -161,7 +161,7 @@ function LiveStage({ snapshot }: { snapshot: Snapshot }) {
         {flat.question.anonymous && <span className="chip bg-note-pink/60 text-base">🕶 anonymous</span>}
       </div>
       <h1 className="display-type mb-3 text-6xl xl:text-7xl">{flat.question.prompt}</h1>
-      {flat.question.hint && <p className="mb-6 font-hand text-4xl text-ink-soft">{flat.question.hint}</p>}
+      {flat.question.hint && <p className="mb-6 font-semibold text-2xl text-ink-soft">{flat.question.hint}</p>}
 
       {revealed ? (
         <div className="min-h-0 flex-1 overflow-y-auto py-4">
@@ -186,12 +186,12 @@ function LiveStage({ snapshot }: { snapshot: Snapshot }) {
           {everyoneIn && online.length > 0 ? (
             <p className="animate-pop-in display-type text-5xl">everyone’s in 🎉</p>
           ) : flat.question.anonymous ? (
-            <p className="font-hand text-4xl text-ink-soft">answers are anonymous on this one 🕶</p>
+            <p className="font-semibold text-2xl text-ink-soft">answers are anonymous on this one 🕶</p>
           ) : (
             pending.length > 0 &&
             pending.length <= 12 && (
               <div className="flex max-w-3xl flex-wrap items-center justify-center gap-2">
-                <span className="mr-1 font-hand text-3xl text-ink-soft">still thinking:</span>
+                <span className="mr-1 font-semibold text-xl text-ink-soft">still thinking:</span>
                 {pending.map((p) => (
                   <AvatarChip key={p.pid} p={p} state="waiting" />
                 ))}

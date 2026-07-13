@@ -61,7 +61,7 @@ export default function RecapView({ code }: { code: string }) {
   return (
     <div className="mx-auto max-w-4xl px-6 py-10">
       <header className="mb-10 text-center">
-        <p className="font-hand text-3xl text-ink-soft">the full recap of</p>
+        <p className="font-semibold text-xl text-ink-soft">the full recap of</p>
         <h1 className="display-type text-5xl sm:text-6xl">{snap.config.name}</h1>
         <p className="mt-2 text-sm font-bold text-ink-soft">
           {new Date(snap.config.createdAt).toLocaleDateString(undefined, { dateStyle: 'long' })} · room {code}
@@ -128,7 +128,7 @@ export default function RecapView({ code }: { code: string }) {
       {snap.scratch && (
         <section className="card-pop mb-10 bg-note-yellow/40 p-6">
           <h2 className="display-type mb-3 text-2xl">Host scratchpad</h2>
-          <p className="font-hand text-2xl leading-snug whitespace-pre-wrap">{snap.scratch}</p>
+          <p className="text-base leading-relaxed whitespace-pre-wrap">{snap.scratch}</p>
         </section>
       )}
 

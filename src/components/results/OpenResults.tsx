@@ -22,7 +22,7 @@ export default function OpenResults({ question, answers, participants, big }: Re
           className="card-pop flex cursor-grab flex-col gap-3 p-5"
           style={{ background: `${noteColor(i)}40` }}
         >
-          <blockquote className={`font-hand leading-snug ${big ? 'text-3xl' : 'text-2xl'}`}>“{a.text}”</blockquote>
+          <blockquote className={`font-medium leading-snug ${big ? 'text-2xl' : 'text-lg'}`}>“{a.text}”</blockquote>
           {!question.anonymous && a.pid && (
             <figcaption className="mt-auto">
               <AuthorChip participants={participants} pid={a.pid} />

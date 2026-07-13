@@ -102,7 +102,7 @@ Light, warm, poster-like — light backgrounds project far better than dark in a
 **Type (Google fonts, self-hosted via Fontsource so venue WiFi can't hurt us):**
 - Display: **Bricolage Grotesque** — big, characterful, poster-grade
 - UI/body: **Outfit** — friendly geometric sans
-- Handwriting accent: **Caveat** — post-its and the scratchpad
+- (A Caveat handwriting accent shipped in v1 and was removed same-day at Clark's request — all-sans everywhere, including sticky notes.)
 
 ## 7. Stack
 

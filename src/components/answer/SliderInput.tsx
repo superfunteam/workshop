@@ -8,7 +8,7 @@ function SliderCaption({ n, left, right, touched }: { n: number; left: string; r
   const caption =
     n < 15 ? `very ${left}` : n < 40 ? `leaning ${left}` : n <= 60 ? 'right in the middle' : n <= 85 ? `leaning ${right}` : `very ${right}`;
   return (
-    <div className="mt-2 h-9 text-center font-hand text-2xl text-ink-soft" style={{ opacity: touched ? 1 : 0.4 }}>
+    <div className="mt-2 h-9 text-center font-semibold text-lg text-ink-soft" style={{ opacity: touched ? 1 : 0.4 }}>
       <AnimatePresence mode="popLayout" initial={false}>
         <motion.div
           key={caption}

@@ -50,7 +50,7 @@ export default function PostitsResults({ question, answers, participants, big }:
               );
             })}
             {group.notes.length === 0 && (
-              <p className="py-4 text-center font-hand text-xl text-ink-faint">nothing here yet</p>
+              <p className="py-4 text-center font-semibold text-base text-ink-faint">nothing here yet</p>
             )}
           </div>
         </section>

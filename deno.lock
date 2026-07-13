@@ -12,7 +12,6 @@
     "packageJson": {
       "dependencies": [
         "npm:@fontsource-variable/bricolage-grotesque@^5.2.0",
-        "npm:@fontsource-variable/caveat@^5.2.0",
         "npm:@fontsource-variable/outfit@^5.2.0",
         "npm:@netlify/blobs@10",
         "npm:@netlify/edge-functions@^2.11.0",

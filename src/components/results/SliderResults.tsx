@@ -77,7 +77,7 @@ export default function SliderResults({ question, answers, participants, big }: 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.85 }}
-        className={`mt-20 text-center font-hand text-ink-soft ${big ? 'text-4xl' : 'text-2xl'}`}
+        className={`mt-20 text-center font-semibold text-ink-soft ${big ? 'text-3xl' : 'text-lg'}`}
       >
         {verdict}
       </motion.p>

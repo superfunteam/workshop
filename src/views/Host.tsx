@@ -304,7 +304,7 @@ function Console({ code, hostKey }: { code: string; hostKey: string }) {
                       </span>
                     ))}
                     {snapshot.participants.length === 0 && (
-                      <span className="font-hand text-xl text-ink-soft">nobody yet — send folks to the join code</span>
+                      <span className="font-semibold text-base text-ink-soft">nobody yet — send folks to the join code</span>
                     )}
                   </div>
                 </div>
@@ -333,7 +333,7 @@ function Console({ code, hostKey }: { code: string; hostKey: string }) {
             </AnimatePresence>
           )}
           {state.phase === 'break' && (
-            <div className="card-pop bg-note-sky/40 p-6 text-center font-hand text-3xl">
+            <div className="card-pop bg-note-sky/40 p-6 text-center font-semibold text-xl">
               Room’s on break ☕ — hit “Back to it” when you’re ready
             </div>
           )}
@@ -367,7 +367,7 @@ function LobbyPanel({ code, online }: { code: string; online: number }) {
       <p className="font-semibold text-ink-soft">
         Send people to <span className="font-mono font-bold text-ink">{joinUrl}</span> — or throw the stage view on the projector; it has a QR code.
       </p>
-      <p className="font-hand text-3xl">{online === 0 ? 'waiting for the first arrival…' : `${online} in the room so far`}</p>
+      <p className="font-semibold text-xl">{online === 0 ? 'waiting for the first arrival…' : `${online} in the room so far`}</p>
       <p className="text-sm font-semibold text-ink-soft">Hit “Start the show” up top when the room’s ready.</p>
     </div>
   );
@@ -445,14 +445,14 @@ function NotesDock({ notes, scratch, onScratch }: { notes: string; scratch: stri
     <footer className="grid h-44 shrink-0 grid-cols-2 border-t-[2.5px] border-ink bg-card">
       <div className="flex flex-col overflow-hidden border-r-[2.5px] border-ink p-3">
         <div className="mb-1 text-xs font-extrabold tracking-wide text-ink-soft uppercase">📋 Your notes for this question</div>
-        <div className="flex-1 overflow-y-auto font-hand text-2xl leading-snug whitespace-pre-wrap">
+        <div className="flex-1 overflow-y-auto text-base leading-relaxed whitespace-pre-wrap">
           {notes || <span className="text-ink-faint">no presenter notes on this one — add them in the editor</span>}
         </div>
       </div>
       <div className="flex flex-col overflow-hidden p-3">
         <div className="mb-1 text-xs font-extrabold tracking-wide text-ink-soft uppercase">✍️ Scratchpad (saves as you type, lands in the export)</div>
         <textarea
-          className="w-full flex-1 resize-none bg-transparent font-hand text-2xl leading-snug outline-none placeholder:text-ink-faint"
+          className="w-full flex-1 resize-none bg-transparent text-base leading-relaxed outline-none placeholder:text-ink-faint"
           placeholder="“CEO hates the mascot” — that kind of thing"
           value={draft}
           onChange={(e) => onChange(e.target.value)}

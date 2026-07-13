@@ -80,7 +80,7 @@ export default function PostitsInput({
   return (
     <div className="w-full">
       <div className="mb-3 flex items-center justify-between gap-2 text-sm font-semibold text-ink-soft">
-        <span className="font-hand text-xl">psst — you can drag notes between columns</span>
+        <span className="font-semibold text-base">psst — you can drag notes between columns</span>
         <span>
           {failed ? (
             <button type="button" className="text-coral underline" onClick={() => void save(latest.current)}>

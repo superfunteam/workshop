@@ -26,7 +26,7 @@ export default function RankInput({
 
   return (
     <div className="flex w-full flex-col items-center gap-6">
-      <p className="font-hand text-2xl text-ink-soft">Tap in order — most important first</p>
+      <p className="font-semibold text-lg text-ink-soft">Tap in order — most important first</p>
       <div className="flex w-full flex-col gap-3">
         {question.options.map((option, i) => {
           const pos = order.indexOf(i);

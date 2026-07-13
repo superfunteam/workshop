@@ -144,7 +144,7 @@ export default function InspoInput({
         </AnimatePresence>
       </div>
       {items.length === 0 && (
-        <p className="text-center font-hand text-2xl text-ink-soft">
+        <p className="text-center font-semibold text-lg text-ink-soft">
           Sites you love, screenshots, moodboard bits — pin anything
         </p>
       )}

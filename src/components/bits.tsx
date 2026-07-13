@@ -79,7 +79,7 @@ export function SyncDot({ status }: { status: SyncStatus }) {
 
 export function EmptyHint({ children }: { children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl border-2 border-dashed border-ink-faint px-6 py-8 text-center font-hand text-2xl text-ink-soft">
+    <div className="rounded-2xl border-2 border-dashed border-ink-faint px-6 py-8 text-center font-semibold text-lg text-ink-soft">
       {children}
     </div>
   );

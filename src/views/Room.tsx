@@ -74,7 +74,7 @@ function JoinScreen({ code, onJoined }: { code: string; onJoined: (id: Identity)
   return (
     <div className="mx-auto flex min-h-dvh max-w-xl flex-col items-center justify-center gap-6 px-6 py-10">
       <div className="text-center">
-        <p className="font-hand text-3xl text-ink-soft">you’re walking into</p>
+        <p className="font-semibold text-xl text-ink-soft">you’re walking into</p>
         <h1 className="display-type text-5xl">{meta?.name ?? '…'}</h1>
       </div>
       <div className="card-pop flex w-full flex-col gap-5 p-6">
@@ -116,7 +116,7 @@ function JoinScreen({ code, onJoined }: { code: string; onJoined: (id: Identity)
         <button type="button" className="btn-pop bg-sun py-3 text-xl" disabled={busy || !name.trim()} onClick={() => void join()}>
           {busy ? 'Joining…' : `Join as ${avatar} ${name.trim() || '…'}`}
         </button>
-        {error && <p className="text-center font-hand text-xl text-coral">{error}</p>}
+        {error && <p className="text-center font-semibold text-base text-coral">{error}</p>}
       </div>
     </div>
   );
@@ -144,7 +144,7 @@ function LiveRoom({ code, identity }: { code: string; identity: Identity }) {
     return (
       <Centered>
         <div className="thinking-dots"><span /><span /><span /></div>
-        <p className="font-hand text-2xl text-ink-soft">syncing up…</p>
+        <p className="font-semibold text-lg text-ink-soft">syncing up…</p>
       </Centered>
     );
   }
@@ -186,7 +186,7 @@ function PhaseBody({ code, snapshot, identity }: { code: string; snapshot: Snaps
       <Centered>
         <div className="animate-wiggle text-7xl">🏕️</div>
         <h1 className="display-type text-4xl">You’re in!</h1>
-        <p className="font-hand text-3xl text-ink-soft">hang tight — the host will kick things off</p>
+        <p className="font-semibold text-xl text-ink-soft">hang tight — the host will kick things off</p>
         <div className="mt-4 flex max-w-md flex-wrap justify-center gap-2">
           {snapshot.participants.filter((p) => p.online).map((p) => (
             <AvatarChip key={p.pid} p={p} />
@@ -202,7 +202,7 @@ function PhaseBody({ code, snapshot, identity }: { code: string; snapshot: Snaps
       <Centered>
         <div className="text-7xl">☕</div>
         <h1 className="display-type text-5xl">Break time</h1>
-        <p className="font-hand text-3xl text-ink-soft">stretch those legs — we’ll be right here</p>
+        <p className="font-semibold text-xl text-ink-soft">stretch those legs — we’ll be right here</p>
       </Centered>
     );
   }
@@ -212,7 +212,7 @@ function PhaseBody({ code, snapshot, identity }: { code: string; snapshot: Snaps
       <Centered>
         <div className="text-7xl">🎬</div>
         <h1 className="display-type text-5xl">That’s a wrap!</h1>
-        <p className="font-hand text-3xl text-ink-soft">thanks for making it a good one, {identity.name}</p>
+        <p className="font-semibold text-xl text-ink-soft">thanks for making it a good one, {identity.name}</p>
         <Link to={`/recap/${code}`} className="btn-pop bg-sun mt-4 text-lg">
           See everything we made →
         </Link>
@@ -248,7 +248,7 @@ function QuestionStage({ code, snapshot, identity }: { code: string; snapshot: S
   if (!flat) {
     return (
       <Centered>
-        <p className="font-hand text-3xl text-ink-soft">the host is lining up the next bit…</p>
+        <p className="font-semibold text-xl text-ink-soft">the host is lining up the next bit…</p>
       </Centered>
     );
   }
@@ -285,7 +285,7 @@ function QuestionStage({ code, snapshot, identity }: { code: string; snapshot: S
           <>
             <h1 className="display-type mb-2 text-4xl sm:text-5xl">{question.prompt}</h1>
             {question.hint && question.type !== 'discuss' && (
-              <p className="mb-6 font-hand text-2xl text-ink-soft">{question.hint}</p>
+              <p className="mb-6 font-semibold text-lg text-ink-soft">{question.hint}</p>
             )}
             {(!question.hint || question.type === 'discuss') && <div className="mb-6" />}
           </>
@@ -336,7 +336,7 @@ function QuestionStage({ code, snapshot, identity }: { code: string; snapshot: S
             <motion.h2 variants={popChild} className="display-type text-4xl">
               You’re in!
             </motion.h2>
-            <motion.p variants={popChild} className="font-hand text-3xl text-ink-soft">
+            <motion.p variants={popChild} className="font-semibold text-xl text-ink-soft">
               waiting on the group — {onlineAnswered(snapshot.participants, answeredPids)} of{' '}
               {snapshot.participants.filter((p) => p.online).length} answered
             </motion.p>

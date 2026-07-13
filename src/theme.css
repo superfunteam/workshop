@@ -33,7 +33,6 @@
 
   --font-display: 'Bricolage Grotesque Variable', 'Bricolage Grotesque', sans-serif;
   --font-sans: 'Outfit Variable', 'Outfit', sans-serif;
-  --font-hand: 'Caveat Variable', 'Caveat', cursive;
 
   --shadow-pop: 0.25rem 0.25rem 0 0 var(--color-ink);
   --shadow-pop-sm: 0.1875rem 0.1875rem 0 0 var(--color-ink);
@@ -140,12 +139,12 @@ body {
   background: white;
 }
 
-/* Sticky notes — Caveat scrawl, believable tilt, folded corner. */
+/* Sticky notes — believable tilt, folded corner. */
 @utility sticky-note {
   position: relative;
-  font-family: var(--font-hand);
-  font-size: 1.35rem;
-  line-height: 1.15;
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1.3;
   padding: 0.9rem 1rem 1.1rem;
   border-radius: 2px 2px 14px 2px;
   box-shadow: 2px 3px 0 0 rgb(35 33 27 / 0.28);

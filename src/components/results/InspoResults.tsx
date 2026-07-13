@@ -36,7 +36,7 @@ export default function InspoResults({ question, answers, participants, big }: R
           <div className="absolute right-2 bottom-2 flex gap-1">
             {!question.anonymous && item.pid && <AuthorChip participants={participants} pid={item.pid} />}
           </div>
-          {item.note && <p className="mt-1 px-1 font-hand text-xl">{item.note}</p>}
+          {item.note && <p className="mt-1 px-1 font-semibold text-base">{item.note}</p>}
         </motion.div>
       ))}
     </div>

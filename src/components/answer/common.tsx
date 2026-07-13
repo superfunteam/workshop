@@ -55,7 +55,7 @@ export function ErrorNote({ error }: { error: string | null }) {
       initial={{ opacity: 0, y: 8, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={POP}
-      className="font-hand text-xl text-coral"
+      className="font-semibold text-base text-coral"
       role="alert"
     >
       {error} — give it another tap

@@ -36,7 +36,7 @@ export default function Home() {
           🏕️
         </div>
         <h1 className="display-type mt-2 text-6xl sm:text-7xl">Workshop</h1>
-        <p className="mt-3 font-hand text-3xl text-ink-soft">
+        <p className="mt-3 font-semibold text-xl text-ink-soft">
           run brand workshops everyone actually enjoys
         </p>
       </header>
@@ -60,7 +60,7 @@ export default function Home() {
           <p className="text-sm font-semibold text-ink-soft">
             Comes pre-loaded with a branding-workshop template — sections, questions, the works. Make it yours.
           </p>
-          {error && <p className="font-hand text-xl text-coral">{error}</p>}
+          {error && <p className="font-semibold text-base text-coral">{error}</p>}
         </section>
 
         <section className="card-pop flex flex-col gap-4 bg-note-sky/30 p-6">

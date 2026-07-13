@@ -3,7 +3,6 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import '@fontsource-variable/bricolage-grotesque';
 import '@fontsource-variable/outfit';
-import '@fontsource-variable/caveat';
 import './theme.css';
 import App from './App.tsx';
 

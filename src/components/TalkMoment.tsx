@@ -32,7 +32,7 @@ export function SlideMoment({ question, big }: { question: SlideQuestion; big?: 
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ ...SLIDE, delay: 0.08 }}
-          className={`max-w-3xl font-hand whitespace-pre-line text-ink-soft ${big ? 'text-4xl' : 'text-2xl sm:text-3xl'}`}
+          className={`max-w-3xl font-semibold whitespace-pre-line text-ink-soft ${big ? 'text-3xl' : 'text-lg sm:text-xl'}`}
         >
           {question.body}
         </motion.p>
@@ -71,7 +71,7 @@ export function DiscussMoment({
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ ...SLIDE, delay: 0.06 }}
-        className={`font-hand text-ink-soft ${big ? 'text-5xl' : 'text-3xl'}`}
+        className={`font-semibold text-ink-soft ${big ? 'text-4xl' : 'text-2xl'}`}
       >
         talk it out — {sub}
       </motion.p>

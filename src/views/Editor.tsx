@@ -396,7 +396,7 @@ function QuestionCard({
           <TypeFields question={question} onChange={onChange} />
 
           <Field label="Presenter notes (only you see these, in the host dock)">
-            <textarea className="input-pop min-h-16 w-full font-hand text-xl" value={question.notes ?? ''} maxLength={2000}
+            <textarea className="input-pop min-h-16 w-full text-base" value={question.notes ?? ''} maxLength={2000}
               onChange={(e) => onChange({ ...question, notes: e.target.value || undefined })} />
           </Field>
           <label className="inline-flex cursor-pointer items-center gap-2 text-sm font-bold text-ink-soft">
