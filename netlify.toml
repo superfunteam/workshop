@@ -1,0 +1,17 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[dev]
+  command = "npm run dev"
+  targetPort = 5173
+  port = 8888
+  autoLaunch = false
+
+# The edge function declares its own path via `export const config` in
+# netlify/edge-functions/api.ts — declaring it here too would register it twice.
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
