@@ -128,7 +128,22 @@ Light, warm, poster-like — light backgrounds project far better than dark in a
 - Emote flood: server drops >5/s/participant.
 - SSE cut mid-workshop: auto-reconnect < 2s; worst case, polling fallback continues seamlessly.
 
-## 10. Out of scope (v1)
+## 10. Addendum (same day): slides, discussions, the house deck, full motion
+
+**Two new "talk" types** with no answer machinery (no waiting screen, no reveal, no HUD progress — the host just advances when the room's ready):
+
+- `slide` — presentation moments: big emoji + title + body. Every new room opens with an intro slide and closes with an outro slide; hosts can drop dividers anywhere.
+- `discuss` — a prompt the room talks through out loud. Participants get a "laptops half-mast" screen; the host scratchpad is the record, and the export says so.
+
+**The default template is now the house question set**: intro slide → website goal (choice: gain customers / attract funding) → the brand honestly (post-its: does well / can do better) → fun ↔ corporate (slider) → what content will we make (discussion) → who has the best website (inspo) → champagne moment (open) → outro slide.
+
+**Motion system**: one spring language (`src/lib/springs.ts` — POP/BOUNCE/SLIDE/SHIFT presets) across every interaction. Question-to-question transitions via AnimatePresence; staggered spring reveals on every results screen; whileTap/whileHover on every control; dots/badges/captions pop with springs. No audio anywhere — this runs in a quiet room. `prefers-reduced-motion` collapses all animation to instant, and no content ever *depends* on an animation playing to become visible.
+
+**Draggable post-its**: on the input board, notes drag between category columns — dropping on the other column re-categorizes the note and saves (drop target = the note's own midpoint, not the pointer). On revealed boards (post-its, open-answer cards, inspo pins), everything is free-draggable *locally* so whoever drives the projector can cluster during discussion; those positions are play-space and don't sync or persist (a deliberate scope line — syncing host rearrangement of other people's answers is a v2 idea).
+
+**Presence semantics tightened**: "in the room" now means the tab is actually visible. Hiding the tab (checking email) marks you away immediately — the room never waits on someone who isn't looking — and refocusing brings you back within a heartbeat.
+
+## 11. Out of scope (v1)
 
 - Auth/accounts, multi-team tenancy
 - Free-form canvas (real FigJam) — we're a facilitated question flow, deliberately

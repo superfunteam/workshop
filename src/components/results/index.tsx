@@ -32,6 +32,20 @@ export function AuthorChip({ participants, pid }: { participants: PublicParticip
 }
 
 export default function ResultsView({ question, answers, participants, big }: ResultsProps) {
+  if (question.type === 'slide') {
+    return (
+      <p className="py-4 text-center font-hand text-2xl text-ink-soft whitespace-pre-line">
+        🎬 {question.body || 'A slide — nothing collected.'}
+      </p>
+    );
+  }
+  if (question.type === 'discuss') {
+    return (
+      <p className="py-4 text-center font-hand text-2xl text-ink-soft">
+        🗣️ Talked out live — highlights live in the host scratchpad.
+      </p>
+    );
+  }
   if (answers.length === 0) {
     return (
       <p className="py-10 text-center font-hand text-3xl text-ink-soft">

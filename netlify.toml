@@ -7,10 +7,14 @@
   targetPort = 5173
   port = 8888
   autoLaunch = false
+  # Keep dev away from dist/: netlify dev reads _redirects from the publish
+  # dir, and the SPA fallback written there at build time would swallow the
+  # Vite dev server's module URLs.
+  publish = "public"
 
 # The edge function declares its own path via `export const config` in
 # netlify/edge-functions/api.ts — declaring it here too would register it twice.
 #
-# The SPA fallback lives in public/_redirects (shipped inside the built dist/)
-# rather than here: netlify dev applies toml redirects BEFORE proxying to the
-# Vite dev server, which would swallow Vite's module URLs in local dev.
+# The SPA fallback (dist/_redirects) is written by the build script, NOT here
+# and NOT in public/: netlify dev applies any redirects it can see BEFORE
+# proxying to the Vite dev server, which would swallow Vite's module URLs.

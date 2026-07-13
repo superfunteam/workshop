@@ -173,16 +173,20 @@ export function useRoom(code: string, opts: Options): RoomSync {
     };
     beat();
     const interval = window.setInterval(beat, HEARTBEAT_MS);
-    const onVisible = () => {
+    // "In the room" = the tab is actually up. Hiding the tab marks you away
+    // immediately (no 25s ghost, no background-throttle flapping); refocusing
+    // brings you back instantly.
+    const onVisibility = () => {
       if (document.visibilityState === 'visible') beat();
+      else api.leave(code, pid);
     };
     const onLeave = () => api.leave(code, pid);
-    document.addEventListener('visibilitychange', onVisible);
+    document.addEventListener('visibilitychange', onVisibility);
     window.addEventListener('pagehide', onLeave);
     return () => {
       stopped = true;
       clearInterval(interval);
-      document.removeEventListener('visibilitychange', onVisible);
+      document.removeEventListener('visibilitychange', onVisibility);
       window.removeEventListener('pagehide', onLeave);
     };
   }, [code, pid, heartbeat]);

@@ -10,7 +10,9 @@ export type QuestionType =
   | 'inspo'
   | 'wordcloud'
   | 'dotvote'
-  | 'rank';
+  | 'rank'
+  | 'slide'
+  | 'discuss';
 
 export interface QuestionBase {
   id: string;
@@ -70,6 +72,20 @@ export interface RankQuestion extends QuestionBase {
   options: string[];
 }
 
+/** A presentation moment — intro, outro, section divider. Nothing to answer. */
+export interface SlideQuestion extends QuestionBase {
+  type: 'slide';
+  /** Big friendly emoji above the title. */
+  emoji?: string;
+  /** Body copy under the title (prompt is the title). */
+  body?: string;
+}
+
+/** A talk-it-out moment. No inputs; the host scratchpad catches the gold. */
+export interface DiscussQuestion extends QuestionBase {
+  type: 'discuss';
+}
+
 export type Question =
   | ChoiceQuestion
   | OpenQuestion
@@ -78,7 +94,13 @@ export type Question =
   | InspoQuestion
   | WordcloudQuestion
   | DotvoteQuestion
-  | RankQuestion;
+  | RankQuestion
+  | SlideQuestion
+  | DiscussQuestion;
+
+/** Types with no answer machinery: no waiting screen, no reveal, no HUD progress. */
+export const TALK_TYPES: ReadonlySet<QuestionType> = new Set(['slide', 'discuss']);
+export const isTalkType = (t: QuestionType): boolean => TALK_TYPES.has(t);
 
 export interface Section {
   id: string;

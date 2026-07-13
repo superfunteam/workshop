@@ -2,10 +2,12 @@ import type { PublicParticipant, QuestionType } from '../../shared/types.ts';
 import type { SyncStatus } from '../lib/useRoom.ts';
 
 export const TYPE_META: Record<QuestionType, { label: string; emoji: string; blurb: string }> = {
+  slide: { label: 'Slide', emoji: '🎬', blurb: 'Intro, outro, divider' },
   choice: { label: 'Multiple choice', emoji: '🔘', blurb: 'Pick from canned answers' },
   open: { label: 'Open answer', emoji: '💬', blurb: 'Everyone types a response' },
   postits: { label: 'Post-its', emoji: '🗒️', blurb: 'Notes across categories' },
   slider: { label: 'Slider', emoji: '🎚️', blurb: 'Between two poles' },
+  discuss: { label: 'Discussion', emoji: '🗣️', blurb: 'Talk it out, no typing' },
   inspo: { label: 'Inspo board', emoji: '🖼️', blurb: 'Paste links & images' },
   wordcloud: { label: 'Word cloud', emoji: '☁️', blurb: 'A few words each' },
   dotvote: { label: 'Dot vote', emoji: '🔴', blurb: 'Spend sticker dots' },

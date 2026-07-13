@@ -3,10 +3,13 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import type { HostAction } from '../../shared/types.ts';
+import { AnimatePresence, motion } from 'motion/react';
+import { isTalkType, type HostAction } from '../../shared/types.ts';
 import { currentQuestion } from '../../shared/flow.ts';
 import { allAnswered, onlineAnswered } from '../../shared/presence.ts';
 import { summarize } from '../../shared/aggregate.ts';
+import { SLIDE } from '../lib/springs.ts';
+import { DiscussMoment, SlideMoment } from '../components/TalkMoment.tsx';
 import { api } from '../lib/api.ts';
 import { session } from '../lib/session.ts';
 import { useRoom } from '../lib/useRoom.ts';
@@ -121,7 +124,8 @@ function Console({ code, hostKey }: { code: string; hostKey: string }) {
   const qid = flat?.question.id ?? '';
   const answeredPids = qid ? (snapshot.answers[qid]?.answeredPids ?? []) : [];
   const revealed = !!(qid && state.revealed[qid]);
-  const everyoneIn = allAnswered(snapshot.participants, answeredPids);
+  const talk = !!flat && isTalkType(flat.question.type);
+  const everyoneIn = !talk && allAnswered(snapshot.participants, answeredPids);
 
   return (
     <div className="flex h-dvh flex-col overflow-hidden">
@@ -197,19 +201,27 @@ function Console({ code, hostKey }: { code: string; hostKey: string }) {
                   const isCurrent = sIdx === state.current.section && qIdx === state.current.question;
                   const count = snapshot.answers[q.id]?.answeredPids.length ?? 0;
                   return (
-                    <button
+                    <motion.button
                       key={q.id}
                       type="button"
+                      whileTap={{ scale: 0.97 }}
                       onClick={() => void act({ action: 'goto', section: sIdx, question: qIdx })}
-                      className={`cursor-pointer rounded-xl border-2 px-2.5 py-1.5 text-left text-sm font-semibold transition-all ${
-                        isCurrent ? 'border-ink bg-sun shadow-pop-sm' : 'border-transparent hover:border-ink-faint'
-                      }`}
+                      className="relative cursor-pointer rounded-xl px-2.5 py-1.5 text-left text-sm font-semibold"
                     >
-                      <span className="line-clamp-2">{q.prompt}</span>
-                      <span className="mt-0.5 flex items-center gap-1.5 text-[11px] text-ink-soft">
-                        {state.revealed[q.id] ? '👁 revealed' : count > 0 ? `${count} answered` : '—'}
+                      {isCurrent && (
+                        <motion.span
+                          layoutId="rail-pill"
+                          transition={SLIDE}
+                          className="absolute inset-0 rounded-xl border-2 border-ink bg-sun shadow-pop-sm"
+                        />
+                      )}
+                      <span className={`relative line-clamp-2 ${isCurrent ? '' : 'opacity-80'}`}>{q.prompt}</span>
+                      <span className="relative mt-0.5 flex items-center gap-1.5 text-[11px] text-ink-soft">
+                        {isTalkType(q.type)
+                          ? q.type === 'slide' ? '🎬 slide' : '🗣️ discussion'
+                          : state.revealed[q.id] ? '👁 revealed' : count > 0 ? `${count} answered` : '—'}
                       </span>
-                    </button>
+                    </motion.button>
                   );
                 })}
               </div>
@@ -221,76 +233,104 @@ function Console({ code, hostKey }: { code: string; hostKey: string }) {
         <main className="flex min-w-0 flex-1 flex-col overflow-y-auto p-5">
           {state.phase === 'lobby' && <LobbyPanel code={code} online={online.length} />}
           {state.phase !== 'lobby' && flat && (
-            <>
-              <div className="mb-3 flex flex-wrap items-center gap-2">
-                <span className="chip bg-note-lilac/60">{flat.section.title}</span>
-                <span className="chip">{flat.n + 1} of {flat.total}</span>
-                <TypeBadge type={flat.question.type} />
-                {flat.question.anonymous && <span className="chip bg-note-pink/60">🕶 anonymous</span>}
-              </div>
-              <h1 className="display-type mb-4 text-3xl">{flat.question.prompt}</h1>
+            <AnimatePresence mode="popLayout" initial={false}>
+              <motion.div
+                key={qid}
+                initial={{ opacity: 0, y: 22, scale: 0.99 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -16, transition: { duration: 0.12 } }}
+                transition={SLIDE}
+              >
+                <div className="mb-3 flex flex-wrap items-center gap-2">
+                  <span className="chip bg-note-lilac/60">{flat.section.title}</span>
+                  <span className="chip">{flat.n + 1} of {flat.total}</span>
+                  <TypeBadge type={flat.question.type} />
+                  {flat.question.anonymous && <span className="chip bg-note-pink/60">🕶 anonymous</span>}
+                </div>
+                <h1 className="display-type mb-4 text-3xl">{flat.question.prompt}</h1>
 
-              {/* HUD: who's in */}
-              <div className="card-pop mb-4 p-3">
-                <div className="mb-2 flex items-center justify-between">
-                  <span className="text-sm font-extrabold text-ink-soft">
-                    {onlineAnswered(snapshot.participants, answeredPids)} of {online.length} answered
-                    {everyoneIn && online.length > 0 && <span className="ml-2">🎉 everyone’s in!</span>}
-                  </span>
-                  <div className="flex gap-2">
-                    <button type="button" className="btn-pop px-3 py-1 text-sm" disabled={busy} onClick={() => void act({ action: 'prev' })}>
-                      ← Back
-                    </button>
-                    {!revealed ? (
-                      <button
-                        type="button"
-                        className={`btn-pop bg-coral px-4 py-1 text-sm text-white ${everyoneIn ? 'animate-pulse-ring' : ''}`}
-                        disabled={busy}
-                        onClick={() => void act({ action: 'reveal', qid })}
-                      >
-                        👁 Reveal answers
-                      </button>
-                    ) : (
-                      <button type="button" className="btn-pop px-3 py-1 text-sm" disabled={busy} onClick={() => void act({ action: 'reopen', qid })}>
-                        🙈 Hide again
-                      </button>
+                {/* HUD: who's in */}
+                <div className="card-pop mb-4 p-3">
+                  <div className="mb-2 flex items-center justify-between">
+                    <span className="text-sm font-extrabold text-ink-soft">
+                      {talk ? (
+                        flat.question.type === 'slide' ? '🎬 Slide — advance when the room’s ready' : '🗣️ Discussion — scratchpad it, then advance'
+                      ) : (
+                        <>
+                          {onlineAnswered(snapshot.participants, answeredPids)} of {online.length} answered
+                          {everyoneIn && online.length > 0 && <span className="ml-2">🎉 everyone’s in!</span>}
+                        </>
+                      )}
+                    </span>
+                    <div className="flex gap-2">
+                      <motion.button whileTap={{ scale: 0.95 }} type="button" className="btn-pop px-3 py-1 text-sm" disabled={busy} onClick={() => void act({ action: 'prev' })}>
+                        ← Back
+                      </motion.button>
+                      {!talk &&
+                        (!revealed ? (
+                          <motion.button
+                            whileTap={{ scale: 0.95 }}
+                            type="button"
+                            className={`btn-pop bg-coral px-4 py-1 text-sm text-white ${everyoneIn ? 'animate-pulse-ring' : ''}`}
+                            disabled={busy}
+                            onClick={() => void act({ action: 'reveal', qid })}
+                          >
+                            👁 Reveal answers
+                          </motion.button>
+                        ) : (
+                          <motion.button whileTap={{ scale: 0.95 }} type="button" className="btn-pop px-3 py-1 text-sm" disabled={busy} onClick={() => void act({ action: 'reopen', qid })}>
+                            🙈 Hide again
+                          </motion.button>
+                        ))}
+                      <motion.button whileTap={{ scale: 0.95 }} type="button" className="btn-pop bg-sun px-3 py-1 text-sm" disabled={busy} onClick={() => void act({ action: 'next' })}>
+                        Next →
+                      </motion.button>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {snapshot.participants.map((p) => (
+                      <span key={p.pid} className="group relative">
+                        <AvatarChip p={p} state={!p.online ? 'offline' : talk ? undefined : answeredPids.includes(p.pid) ? 'done' : 'waiting'} />
+                        <button
+                          type="button"
+                          title={`remove ${p.name}`}
+                          onClick={() => {
+                            if (confirm(`Remove ${p.name} from the room count?`)) void act({ action: 'remove', pid: p.pid });
+                          }}
+                          className="absolute -top-1.5 -right-1.5 hidden h-4 w-4 cursor-pointer items-center justify-center rounded-full border border-ink bg-white text-[9px] group-hover:flex"
+                        >
+                          ✕
+                        </button>
+                      </span>
+                    ))}
+                    {snapshot.participants.length === 0 && (
+                      <span className="font-hand text-xl text-ink-soft">nobody yet — send folks to the join code</span>
                     )}
-                    <button type="button" className="btn-pop bg-sun px-3 py-1 text-sm" disabled={busy} onClick={() => void act({ action: 'next' })}>
-                      Next →
-                    </button>
                   </div>
                 </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {snapshot.participants.map((p) => (
-                    <span key={p.pid} className="group relative">
-                      <AvatarChip p={p} state={!p.online ? 'offline' : answeredPids.includes(p.pid) ? 'done' : 'waiting'} />
-                      <button
-                        type="button"
-                        title={`remove ${p.name}`}
-                        onClick={() => {
-                          if (confirm(`Remove ${p.name} from the room count?`)) void act({ action: 'remove', pid: p.pid });
-                        }}
-                        className="absolute -top-1.5 -right-1.5 hidden h-4 w-4 cursor-pointer items-center justify-center rounded-full border border-ink bg-white text-[9px] group-hover:flex"
-                      >
-                        ✕
-                      </button>
-                    </span>
-                  ))}
-                  {snapshot.participants.length === 0 && (
-                    <span className="font-hand text-xl text-ink-soft">nobody yet — send folks to the join code</span>
-                  )}
-                </div>
-              </div>
 
-              {/* live values (host always sees them) */}
-              <div className={`card-pop mb-4 p-4 ${revealed ? 'bg-note-mint/20' : 'bg-white'}`}>
-                <div className="mb-2 flex items-center justify-between text-xs font-extrabold tracking-wide text-ink-soft uppercase">
-                  <span>{revealed ? 'Revealed to the room' : 'Live peek (only you see this)'}</span>
-                  <span className="font-sans normal-case">{summarize(flat.question, snapshot.answers[qid]?.answers ?? [])}</span>
-                </div>
-                <ResultsView question={flat.question} answers={snapshot.answers[qid]?.answers ?? []} participants={snapshot.participants} />
-              </div>
-            </>
+                {/* talk moments render themselves; everything else gets the live peek */}
+                {flat.question.type === 'slide' && (
+                  <div className="card-pop mb-4 bg-note-sky/20 p-4">
+                    <SlideMoment question={flat.question} />
+                  </div>
+                )}
+                {flat.question.type === 'discuss' && (
+                  <div className="card-pop mb-4 bg-note-sky/20 p-4">
+                    <DiscussMoment question={flat.question} role="host" />
+                  </div>
+                )}
+                {!talk && (
+                  <div className={`card-pop mb-4 p-4 ${revealed ? 'bg-note-mint/20' : 'bg-white'}`}>
+                    <div className="mb-2 flex items-center justify-between text-xs font-extrabold tracking-wide text-ink-soft uppercase">
+                      <span>{revealed ? 'Revealed to the room' : 'Live peek (only you see this)'}</span>
+                      <span className="font-sans normal-case">{summarize(flat.question, snapshot.answers[qid]?.answers ?? [])}</span>
+                    </div>
+                    <ResultsView question={flat.question} answers={snapshot.answers[qid]?.answers ?? []} participants={snapshot.participants} />
+                  </div>
+                )}
+              </motion.div>
+            </AnimatePresence>
           )}
           {state.phase === 'break' && (
             <div className="card-pop bg-note-sky/40 p-6 text-center font-hand text-3xl">

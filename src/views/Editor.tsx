@@ -306,6 +306,10 @@ function blankQuestion(type: QuestionType): Question {
       return { ...base, type, options: ['Option one', 'Option two', 'Option three'], dots: 3 };
     case 'rank':
       return { ...base, type, options: ['Option one', 'Option two', 'Option three'] };
+    case 'slide':
+      return { ...base, type, emoji: '✨' };
+    case 'discuss':
+      return { ...base, type };
   }
 }
 
@@ -479,6 +483,20 @@ function TypeFields({ question, onChange }: { question: Question; onChange: (q: 
             onChange={(e) => onChange({ ...question, placeholder: e.target.value || undefined })} />
         </Field>
       );
+    case 'slide':
+      return (
+        <>
+          <Field label="Big emoji (optional)">
+            <input className="input-pop w-24 text-center text-2xl" value={question.emoji ?? ''} maxLength={4}
+              onChange={(e) => onChange({ ...question, emoji: e.target.value || undefined })} />
+          </Field>
+          <Field label="Body copy (under the title)">
+            <textarea className="input-pop min-h-20 w-full" value={question.body ?? ''} maxLength={2000}
+              onChange={(e) => onChange({ ...question, body: e.target.value || undefined })} />
+          </Field>
+        </>
+      );
+    case 'discuss':
     case 'inspo':
       return null;
   }

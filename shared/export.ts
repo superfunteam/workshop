@@ -37,6 +37,14 @@ function fmtDate(ts: number): string {
 function mdQuestion(q: Question, answers: Answer[], participants: Participant[]): string[] {
   const lines: string[] = [];
   const by = (pid: string) => nameOf(participants, pid, q.anonymous);
+  if (q.type === 'slide') {
+    if (q.body) lines.push(`_${q.body.replace(/\n+/g, ' ')}_`);
+    return lines;
+  }
+  if (q.type === 'discuss') {
+    lines.push('_Discussed live — highlights land in the host scratchpad below._');
+    return lines;
+  }
   if (answers.length === 0) {
     lines.push('_No answers._');
     return lines;

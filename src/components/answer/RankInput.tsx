@@ -2,7 +2,9 @@
 // Deliberately not drag-and-drop — tapping is faster and works on every device.
 
 import { useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 import type { RankQuestion, RankValue } from '../../../shared/types.ts';
+import { BOUNCE, POP } from '../../lib/springs.ts';
 import { ErrorNote, SubmitButton, useSubmit } from './common.tsx';
 
 export default function RankInput({
@@ -30,11 +32,14 @@ export default function RankInput({
           const pos = order.indexOf(i);
           const ranked = pos >= 0;
           return (
-            <button
+            <motion.button
               key={i}
+              whileHover={{ y: -3 }}
+              whileTap={{ scale: 0.97 }}
+              transition={POP}
               type="button"
               onClick={() => tap(i)}
-              className={`card-pop flex cursor-pointer items-center gap-4 px-4 py-3 text-left transition-all hover:-translate-y-0.5 ${
+              className={`card-pop flex cursor-pointer items-center gap-4 px-4 py-3 text-left ${
                 ranked ? 'bg-note-mint' : 'bg-white'
               }`}
               aria-pressed={ranked}
@@ -44,11 +49,26 @@ export default function RankInput({
                   ranked ? 'bg-ink text-white' : 'bg-white text-ink-faint'
                 }`}
               >
-                {ranked ? pos + 1 : '·'}
+                <AnimatePresence mode="popLayout" initial={false}>
+                  <motion.span
+                    key={ranked ? pos + 1 : 'dot'}
+                    initial={{ scale: 0, rotate: -40 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    exit={{ scale: 0, transition: { duration: 0.08 } }}
+                    transition={BOUNCE}
+                    className="inline-block"
+                  >
+                    {ranked ? pos + 1 : '·'}
+                  </motion.span>
+                </AnimatePresence>
               </span>
               <span className="font-display text-lg font-bold">{option}</span>
-              {ranked && <span className="ml-auto text-sm font-semibold text-ink-soft">tap to remove</span>}
-            </button>
+              {ranked && (
+                <motion.span initial={{ opacity: 0, x: 8 }} animate={{ opacity: 1, x: 0 }} className="ml-auto text-sm font-semibold text-ink-soft">
+                  tap to remove
+                </motion.span>
+              )}
+            </motion.button>
           );
         })}
       </div>

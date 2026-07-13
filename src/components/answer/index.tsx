@@ -41,5 +41,9 @@ export default function AnswerInput({
       return <DotvoteInput question={question} value={value as never} onSubmit={onSubmit} />;
     case 'rank':
       return <RankInput question={question} value={value as never} onSubmit={onSubmit} />;
+    case 'slide':
+    case 'discuss':
+      // Talk moments render in the views themselves; nothing to input.
+      return null;
   }
 }

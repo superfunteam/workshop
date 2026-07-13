@@ -1,8 +1,10 @@
 // Everyone's vote lands on the track as their avatar; the group average gets
 // the big flag. Spread gets a plain-language read: agreement or a split room.
 
+import { motion } from 'motion/react';
 import type { SliderQuestion } from '../../../shared/types.ts';
 import { sliderStats } from '../../../shared/aggregate.ts';
+import { BOUNCE, SLIDE } from '../../lib/springs.ts';
 import { personFor, type ResultsProps } from './index.tsx';
 
 export default function SliderResults({ question, answers, participants, big }: ResultsProps<SliderQuestion>) {
@@ -29,39 +31,56 @@ export default function SliderResults({ question, answers, participants, big }: 
         <span>{question.right} →</span>
       </div>
       <div className="relative mx-4">
-        <div className={`w-full rounded-full border-[2.5px] border-ink bg-white ${big ? 'h-7' : 'h-5'}`}>
-          <div
+        <div className={`w-full overflow-hidden rounded-full border-[2.5px] border-ink bg-white ${big ? 'h-7' : 'h-5'}`}>
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${stats.average}%` }}
+            transition={{ ...SLIDE, delay: 0.25 }}
             className="h-full rounded-l-full bg-note-sky/70"
-            style={{ width: `${stats.average}%` }}
           />
         </div>
         {[...buckets.entries()].map(([bucket, list]) =>
           list.map((v, stackIdx) => {
             const person = question.anonymous ? null : personFor(participants, v.pid);
             return (
-              <span
+              <motion.span
                 key={`${bucket}-${stackIdx}`}
-                className={`animate-pop-in absolute -translate-x-1/2 select-none ${big ? 'text-4xl' : 'text-2xl'}`}
+                initial={{ opacity: 0, y: -56, scale: 0.3 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ ...BOUNCE, delay: ((bucket * 17 + stackIdx * 90) % 500) / 1000 }}
+                className={`absolute -translate-x-1/2 select-none ${big ? 'text-4xl' : 'text-2xl'}`}
                 style={{
                   left: `${v.value}%`,
                   bottom: `${(big ? 34 : 24) + stackIdx * (big ? 34 : 26)}px`,
-                  animationDelay: `${(bucket * 17 + stackIdx * 90) % 500}ms`,
                 }}
                 title={person ? `${person.name}: ${v.value}` : String(v.value)}
               >
                 {person?.avatar ?? '●'}
-              </span>
+              </motion.span>
             );
           }),
         )}
-        <div className="absolute -bottom-12 -translate-x-1/2 text-center" style={{ left: `${stats.average}%` }}>
+        <motion.div
+          initial={{ opacity: 0, y: 14, scale: 0.6 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ ...BOUNCE, delay: 0.55 }}
+          className="absolute -bottom-12 -translate-x-1/2 text-center"
+          style={{ left: `${stats.average}%` }}
+        >
           <div className="mx-auto h-8 w-1 rounded bg-ink" />
           <div className={`card-pop mt-1 bg-sun px-3 py-1 font-display font-extrabold whitespace-nowrap ${big ? 'text-2xl' : 'text-base'}`}>
             avg {stats.average}
           </div>
-        </div>
+        </motion.div>
       </div>
-      <p className={`mt-20 text-center font-hand text-ink-soft ${big ? 'text-4xl' : 'text-2xl'}`}>{verdict}</p>
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.85 }}
+        className={`mt-20 text-center font-hand text-ink-soft ${big ? 'text-4xl' : 'text-2xl'}`}
+      >
+        {verdict}
+      </motion.p>
     </div>
   );
 }

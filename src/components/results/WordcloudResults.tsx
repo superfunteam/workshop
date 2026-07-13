@@ -1,6 +1,8 @@
+import { motion } from 'motion/react';
 import type { WordcloudQuestion } from '../../../shared/types.ts';
 import { wordCounts } from '../../../shared/aggregate.ts';
 import { dataColor } from '../bits.tsx';
+import { BOUNCE } from '../../lib/springs.ts';
 import type { ResultsProps } from './index.tsx';
 
 function hash(s: string): number {
@@ -22,21 +24,26 @@ export default function WordcloudResults({ answers, big }: ResultsProps<Wordclou
       {shuffled.map((c, i) => {
         const scale = c.count / max;
         return (
-          <span
+          <motion.span
             key={c.word}
-            className="animate-pop-in display-type inline-block"
+            initial={{ opacity: 0, scale: 0.2, rotate: -12 }}
+            animate={{
+              opacity: 0.55 + 0.45 * scale,
+              scale: 1,
+              rotate: ((hash(c.word) % 5) - 2) * 1.2,
+            }}
+            whileHover={{ scale: 1.12, rotate: 0, opacity: 1 }}
+            transition={{ ...BOUNCE, delay: ((i * 60) % 700) / 1000 }}
+            className="display-type inline-block cursor-default"
             style={{
               fontSize: `${base + (top - base) * scale ** 1.4}rem`,
               color: c.count === max ? 'var(--color-ink)' : dataColor(i % 6),
-              transform: `rotate(${((hash(c.word) % 5) - 2) * 1.2}deg)`,
-              animationDelay: `${(i * 60) % 700}ms`,
-              opacity: 0.55 + 0.45 * scale,
             }}
             title={`${c.count}×`}
           >
             {c.word}
             {c.count > 1 && <sup className="ml-0.5 font-sans text-[0.45em] font-bold text-ink-soft">×{c.count}</sup>}
-          </span>
+          </motion.span>
         );
       })}
     </div>

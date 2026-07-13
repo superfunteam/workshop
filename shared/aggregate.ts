@@ -198,6 +198,8 @@ export function inspoItems(answers: Answer[]): Array<InspoItem & Attributed> {
 
 /** A human one-liner per question — used on host cards and in exports. */
 export function summarize(question: Question, answers: Answer[]): string {
+  if (question.type === 'slide') return 'Slide';
+  if (question.type === 'discuss') return 'Talked it out live';
   const n = answers.length;
   if (n === 0) return 'No answers';
   switch (question.type) {

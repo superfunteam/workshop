@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && node -e \"require('fs').writeFileSync('dist/_redirects', '/*  /index.html  200\\n')\"",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest"

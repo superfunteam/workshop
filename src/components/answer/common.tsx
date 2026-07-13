@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { motion } from 'motion/react';
+import { POP } from '../../lib/springs.ts';
 
 /** Shared submit affordance: big, bouncy, honest about failures. */
 export function useSubmit<V>(onSubmit: (v: V) => Promise<void>) {
@@ -32,22 +34,31 @@ export function SubmitButton({
   label?: string;
 }) {
   return (
-    <button
+    <motion.button
+      whileTap={{ scale: 0.93 }}
+      whileHover={disabled ? undefined : { scale: 1.04 }}
+      transition={POP}
       type="button"
       className="btn-pop bg-sun px-8 py-3 text-xl"
       disabled={busy || disabled}
       onClick={onClick}
     >
       {busy ? 'Sending…' : label ?? (editing ? 'Update answer' : 'Lock it in ✨')}
-    </button>
+    </motion.button>
   );
 }
 
 export function ErrorNote({ error }: { error: string | null }) {
   if (!error) return null;
   return (
-    <p className="font-hand text-xl text-coral" role="alert">
+    <motion.p
+      initial={{ opacity: 0, y: 8, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={POP}
+      className="font-hand text-xl text-coral"
+      role="alert"
+    >
       {error} — give it another tap
-    </p>
+    </motion.p>
   );
 }

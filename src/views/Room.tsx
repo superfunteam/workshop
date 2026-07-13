@@ -2,10 +2,13 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import type { AnswerValue, Snapshot } from '../../shared/types.ts';
+import { AnimatePresence, motion } from 'motion/react';
+import { isTalkType, type AnswerValue, type Snapshot } from '../../shared/types.ts';
 import { currentQuestion } from '../../shared/flow.ts';
 import { onlineAnswered, waitingOn } from '../../shared/presence.ts';
 import { AVATARS } from '../../shared/emoji.ts';
+import { BOUNCE, SLIDE, popChild, staggerParent } from '../lib/springs.ts';
+import { DiscussMoment, SlideMoment } from '../components/TalkMoment.tsx';
 import { api } from '../lib/api.ts';
 import { session, type Identity } from '../lib/session.ts';
 import { useRoom } from '../lib/useRoom.ts';
@@ -88,22 +91,27 @@ function JoinScreen({ code, onJoined }: { code: string; onJoined: (id: Identity)
         />
         <div>
           <p className="mb-2 text-center text-sm font-bold text-ink-soft">Pick your creature</p>
-          <div className="grid grid-cols-8 gap-1.5">
+          <motion.div variants={staggerParent(0.015)} initial="hidden" animate="show" className="grid grid-cols-8 gap-1.5">
             {AVATARS.map((a) => (
-              <button
+              <motion.button
                 key={a}
+                variants={popChild}
+                whileHover={{ scale: 1.25, rotate: -8 }}
+                whileTap={{ scale: 0.8 }}
+                animate={avatar === a ? { scale: 1.15, rotate: 0 } : { scale: 1, rotate: 0 }}
+                transition={BOUNCE}
                 type="button"
                 onClick={() => setAvatar(a)}
-                className={`rounded-xl border-2 p-1.5 text-2xl transition-all hover:scale-110 ${
-                  avatar === a ? 'border-ink bg-sun shadow-pop-sm scale-110' : 'border-transparent'
+                className={`rounded-xl border-2 p-1.5 text-2xl ${
+                  avatar === a ? 'border-ink bg-sun shadow-pop-sm' : 'border-transparent'
                 }`}
                 aria-pressed={avatar === a}
                 aria-label={`avatar ${a}`}
               >
                 {a}
-              </button>
+              </motion.button>
             ))}
-          </div>
+          </motion.div>
         </div>
         <button type="button" className="btn-pop bg-sun py-3 text-xl" disabled={busy || !name.trim()} onClick={() => void join()}>
           {busy ? 'Joining…' : `Join as ${avatar} ${name.trim() || '…'}`}
@@ -250,68 +258,110 @@ function QuestionStage({ code, snapshot, identity }: { code: string; snapshot: S
   const iAnswered = answeredPids.includes(identity.pid);
   const stillThinking = waitingOn(snapshot.participants, answeredPids);
   const isBoard = MULTI_ITEM_TYPES.has(question.type);
-  const showInput = !revealed && (!iAnswered || editing || isBoard);
-  const showWaiting = !revealed && iAnswered && !editing && !isBoard;
+  const talk = isTalkType(question.type);
+  const showInput = !talk && !revealed && (!iAnswered || editing || isBoard);
+  const showWaiting = !talk && !revealed && iAnswered && !editing && !isBoard;
 
   return (
-    <div className="flex flex-1 flex-col">
-      <div className="mb-5 flex flex-wrap items-center gap-2">
-        <span className="chip bg-note-lilac/60">{section.title}</span>
-        <span className="chip">{n + 1} of {total}</span>
-        <TypeBadge type={question.type} />
-        {question.anonymous && <span className="chip bg-note-pink/60">🕶 anonymous</span>}
-      </div>
-
-      <h1 className="display-type mb-2 text-4xl sm:text-5xl">{question.prompt}</h1>
-      {question.hint && <p className="mb-6 font-hand text-2xl text-ink-soft">{question.hint}</p>}
-      {!question.hint && <div className="mb-6" />}
-
-      {revealed && (
-        <div className="flex flex-col gap-6">
-          <ResultsView question={question} answers={questionAnswers?.answers ?? []} participants={snapshot.participants} />
-          <button type="button" className="self-center text-sm font-bold text-ink-soft underline" onClick={() => setEditing(true)}>
-            change my answer
-          </button>
-          {editing && (
-            <div className="card-pop bg-note-yellow/30 p-5">
-              <AnswerInput question={question} value={myValue} onSubmit={submit} code={code} pid={identity.pid} />
-            </div>
-          )}
+    <AnimatePresence mode="popLayout" initial={false}>
+      <motion.div
+        key={question.id}
+        initial={{ opacity: 0, y: 34, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: -26, scale: 0.99, transition: { duration: 0.14 } }}
+        transition={SLIDE}
+        className="flex flex-1 flex-col"
+      >
+        <div className="mb-5 flex flex-wrap items-center gap-2">
+          <span className="chip bg-note-lilac/60">{section.title}</span>
+          <span className="chip">{n + 1} of {total}</span>
+          <TypeBadge type={question.type} />
+          {question.anonymous && <span className="chip bg-note-pink/60">🕶 anonymous</span>}
         </div>
-      )}
 
-      {showInput && (
-        <AnswerInput question={question} value={myValue} onSubmit={submit} code={code} pid={identity.pid} />
-      )}
+        {question.type === 'slide' ? (
+          <SlideMoment question={question} />
+        ) : (
+          <>
+            <h1 className="display-type mb-2 text-4xl sm:text-5xl">{question.prompt}</h1>
+            {question.hint && question.type !== 'discuss' && (
+              <p className="mb-6 font-hand text-2xl text-ink-soft">{question.hint}</p>
+            )}
+            {(!question.hint || question.type === 'discuss') && <div className="mb-6" />}
+          </>
+        )}
 
-      {isBoard && !revealed && (
-        <p className="mt-6 text-center text-sm font-semibold text-ink-soft">
-          {onlineAnswered(snapshot.participants, answeredPids)} of{' '}
-          {snapshot.participants.filter((p) => p.online).length} contributing — boards reveal together 🤫
-        </p>
-      )}
+        {question.type === 'discuss' && <DiscussMoment question={question} role="participant" />}
 
-      {showWaiting && (
-        <div className="flex flex-1 flex-col items-center justify-center gap-5 py-10 text-center">
-          <div className="animate-pop-in text-7xl">🙌</div>
-          <h2 className="display-type text-4xl">You’re in!</h2>
-          <p className="font-hand text-3xl text-ink-soft">
-            waiting on the group — {onlineAnswered(snapshot.participants, answeredPids)} of{' '}
-            {snapshot.participants.filter((p) => p.online).length} answered
+        {revealed && !talk && (
+          <div className="flex flex-col gap-6">
+            <ResultsView question={question} answers={questionAnswers?.answers ?? []} participants={snapshot.participants} />
+            <button type="button" className="self-center text-sm font-bold text-ink-soft underline" onClick={() => setEditing(true)}>
+              change my answer
+            </button>
+            {editing && (
+              <div className="card-pop bg-note-yellow/30 p-5">
+                <AnswerInput question={question} value={myValue} onSubmit={submit} code={code} pid={identity.pid} />
+              </div>
+            )}
+          </div>
+        )}
+
+        {showInput && (
+          <AnswerInput question={question} value={myValue} onSubmit={submit} code={code} pid={identity.pid} />
+        )}
+
+        {isBoard && !revealed && (
+          <p className="mt-6 text-center text-sm font-semibold text-ink-soft">
+            {onlineAnswered(snapshot.participants, answeredPids)} of{' '}
+            {snapshot.participants.filter((p) => p.online).length} contributing — boards reveal together 🤫
           </p>
-          {!question.anonymous && stillThinking.length > 0 && (
-            <div className="flex max-w-md flex-wrap justify-center gap-2">
-              {stillThinking.map((p) => (
-                <AvatarChip key={p.pid} p={p} state="waiting" />
-              ))}
-            </div>
-          )}
-          <div className="thinking-dots mt-2"><span /><span /><span /></div>
-          <button type="button" className="btn-pop mt-2 text-sm" onClick={() => setEditing(true)}>
-            ✏️ Change my answer
-          </button>
-        </div>
-      )}
-    </div>
+        )}
+
+        {showWaiting && (
+          <motion.div
+            variants={staggerParent(0.05)}
+            initial="hidden"
+            animate="show"
+            className="flex flex-1 flex-col items-center justify-center gap-5 py-10 text-center"
+          >
+            <motion.div
+              initial={{ scale: 0, rotate: -20 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={BOUNCE}
+              className="text-7xl"
+            >
+              🙌
+            </motion.div>
+            <motion.h2 variants={popChild} className="display-type text-4xl">
+              You’re in!
+            </motion.h2>
+            <motion.p variants={popChild} className="font-hand text-3xl text-ink-soft">
+              waiting on the group — {onlineAnswered(snapshot.participants, answeredPids)} of{' '}
+              {snapshot.participants.filter((p) => p.online).length} answered
+            </motion.p>
+            {!question.anonymous && stillThinking.length > 0 && (
+              <motion.div variants={staggerParent(0.04)} initial="hidden" animate="show" className="flex max-w-md flex-wrap justify-center gap-2">
+                {stillThinking.map((p) => (
+                  <motion.span key={p.pid} variants={popChild}>
+                    <AvatarChip p={p} state="waiting" />
+                  </motion.span>
+                ))}
+              </motion.div>
+            )}
+            <div className="thinking-dots mt-2"><span /><span /><span /></div>
+            <motion.button
+              variants={popChild}
+              whileTap={{ scale: 0.94 }}
+              type="button"
+              className="btn-pop mt-2 text-sm"
+              onClick={() => setEditing(true)}
+            >
+              ✏️ Change my answer
+            </motion.button>
+          </motion.div>
+        )}
+      </motion.div>
+    </AnimatePresence>
   );
 }

@@ -2,9 +2,11 @@
 // upload to the room and pin to the shared board on reveal.
 
 import { useEffect, useRef, useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 import type { InspoItem, InspoQuestion, InspoValue } from '../../../shared/types.ts';
 import { rid } from '../../../shared/codes.ts';
 import { api } from '../../lib/api.ts';
+import { BOUNCE } from '../../lib/springs.ts';
 
 const IMAGE_RE = /\.(png|jpe?g|gif|webp|avif|svg)(\?|#|$)/i;
 
@@ -97,8 +99,18 @@ export default function InspoInput({
         {status === 'idle' && items.length > 0 && `${items.length} pinned ✓`}
       </div>
       <div className="columns-2 gap-3 sm:columns-3">
+        <AnimatePresence mode="popLayout">
         {items.map((item) => (
-          <div key={item.id} className="group relative mb-3 break-inside-avoid">
+          <motion.div
+            key={item.id}
+            layout
+            initial={{ opacity: 0, scale: 0.5, rotate: -4 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            exit={{ opacity: 0, scale: 0.4, transition: { duration: 0.12 } }}
+            whileHover={{ scale: 1.02, y: -2 }}
+            transition={BOUNCE}
+            className="group relative mb-3 break-inside-avoid"
+          >
             {item.kind === 'link' ? (
               <a
                 href={item.url}
@@ -127,8 +139,9 @@ export default function InspoInput({
             >
               ✕
             </button>
-          </div>
+          </motion.div>
         ))}
+        </AnimatePresence>
       </div>
       {items.length === 0 && (
         <p className="text-center font-hand text-2xl text-ink-soft">

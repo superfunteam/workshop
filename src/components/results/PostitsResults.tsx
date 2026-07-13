@@ -1,7 +1,15 @@
+// The revealed sticky wall. Notes spring in staggered — and they're draggable
+// (locally) so whoever's driving the projector can cluster them while the room
+// talks. Positions are play-space, not saved.
+
+import { motion } from 'motion/react';
 import type { PostitsQuestion } from '../../../shared/types.ts';
 import { postitsByCategory } from '../../../shared/aggregate.ts';
 import { noteColor, tiltFor } from '../bits.tsx';
+import { BOUNCE } from '../../lib/springs.ts';
 import { personFor, type ResultsProps } from './index.tsx';
+
+const tiltDeg = (id: string): number => Number.parseFloat(tiltFor(id));
 
 export default function PostitsResults({ question, answers, participants, big }: ResultsProps<PostitsQuestion>) {
   const groups = postitsByCategory(question, answers);
@@ -20,14 +28,17 @@ export default function PostitsResults({ question, answers, participants, big }:
             {group.notes.map((note, i) => {
               const author = question.anonymous ? null : personFor(participants, note.pid);
               return (
-                <div
+                <motion.div
                   key={note.id}
-                  className={`sticky-note animate-pop-in ${big ? 'text-2xl' : ''}`}
-                  style={{
-                    background: noteColor(group.index),
-                    ['--tilt' as string]: tiltFor(note.id),
-                    animationDelay: `${(i * 70) % 600}ms`,
-                  }}
+                  drag
+                  dragMomentum={false}
+                  whileDrag={{ scale: 1.08, rotate: 0, zIndex: 60, cursor: 'grabbing' }}
+                  whileHover={{ scale: 1.04, rotate: 0 }}
+                  initial={{ scale: 0.4, rotate: -12, opacity: 0 }}
+                  animate={{ scale: 1, rotate: tiltDeg(note.id), opacity: 1 }}
+                  transition={{ ...BOUNCE, delay: Math.min(i * 0.06, 0.5) }}
+                  className={`sticky-note cursor-grab ${big ? 'text-2xl' : ''}`}
+                  style={{ background: noteColor(group.index) }}
                 >
                   {note.text}
                   {author && (
@@ -35,7 +46,7 @@ export default function PostitsResults({ question, answers, participants, big }:
                       {author.avatar} {author.name}
                     </div>
                   )}
-                </div>
+                </motion.div>
               );
             })}
             {group.notes.length === 0 && (

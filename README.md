@@ -14,7 +14,9 @@ Everyone's laptop stays on the same question. People answer on their own screens
 | Editor | `/edit/{CODE}` | authoring sections + questions ahead of time |
 | Recap | `/recap/{CODE}` | afterwards — every result + exports, forever |
 
-**Question types:** multiple choice · open answer · post-its (categorized) · slider · inspo board (paste links or Cmd-V screenshots) · word cloud · dot vote · ranking.
+**Question types:** multiple choice · open answer · post-its (categorized, draggable between columns) · slider · inspo board (paste links or Cmd-V screenshots) · word cloud · dot vote · ranking · **slides** (intro/outro/dividers) · **discussion** (talk it out; the host scratchpad is the record).
+
+**Feel:** everything springs and pops — question transitions, reveals, dots, badges, sticky notes — with zero audio (it's a quiet room). New rooms open with a welcome slide and close with an outro slide, wrapped around the house question set.
 
 **The flow:** everyone answers → answered folks see "waiting on the group" with live progress → the moment the last person's in, every screen pops confetti and the host's Reveal button lights up → host reveals, discusses, advances. Auto-reveal is a toggle. Late arrivals scan the QR and land on the current question; counts update instantly. Anyone can react with emoji any time — they float up every screen in the room, YouTube-Live style.
 

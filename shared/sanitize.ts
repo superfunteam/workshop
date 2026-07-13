@@ -141,6 +141,10 @@ export function sanitizeValue(question: Question, raw: unknown): AnswerValue | n
       const order = [...new Set(intsInRange(v.order, question.options.length))];
       return order.length ? { order } : null;
     }
+    case 'slide':
+    case 'discuss':
+      // Nothing to answer on a talk moment — reject any stray submission.
+      return null;
   }
 }
 
@@ -220,6 +224,13 @@ export function sanitizeQuestion(raw: unknown): Question | null {
       if (options.length < 2) return null;
       return { ...base, type: 'rank', options };
     }
+    case 'slide': {
+      const emoji = typeof q.emoji === 'string' ? [...q.emoji.trim()].slice(0, 4).join('') : '';
+      const body = cleanText(q.body, LIMITS.notes).trim();
+      return { ...base, type: 'slide', emoji: emoji || undefined, body: body || undefined };
+    }
+    case 'discuss':
+      return { ...base, type: 'discuss' };
     default:
       return null;
   }

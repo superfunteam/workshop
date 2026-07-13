@@ -1,9 +1,12 @@
 // The projector view: giant type, live progress, QR for late arrivals,
 // emoji rain. No controls — it's a billboard.
 
-import type { Snapshot } from '../../shared/types.ts';
+import { AnimatePresence, motion } from 'motion/react';
+import { isTalkType, type Snapshot } from '../../shared/types.ts';
 import { currentQuestion } from '../../shared/flow.ts';
 import { allAnswered, onlineAnswered, waitingOn } from '../../shared/presence.ts';
+import { SLIDE } from '../lib/springs.ts';
+import { DiscussMoment, SlideMoment } from '../components/TalkMoment.tsx';
 import { useRoom } from '../lib/useRoom.ts';
 import { useCelebrations } from '../lib/celebrate.ts';
 import ResultsView from '../components/results/index.tsx';
@@ -117,8 +120,39 @@ function LiveStage({ snapshot }: { snapshot: Snapshot }) {
   const everyoneIn = allAnswered(snapshot.participants, answeredPids);
   const pending = waitingOn(snapshot.participants, answeredPids);
 
+  if (isTalkType(flat.question.type)) {
+    return (
+      <AnimatePresence mode="popLayout" initial={false}>
+        <motion.div
+          key={qid}
+          initial={{ opacity: 0, y: 44, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -30, transition: { duration: 0.15 } }}
+          transition={SLIDE}
+          className="flex flex-1 flex-col"
+        >
+          {flat.question.type === 'slide' && <SlideMoment question={flat.question} big />}
+          {flat.question.type === 'discuss' && (
+            <>
+              <h1 className="display-type mb-3 text-center text-6xl xl:text-7xl">{flat.question.prompt}</h1>
+              <DiscussMoment question={flat.question} role="stage" big />
+            </>
+          )}
+        </motion.div>
+      </AnimatePresence>
+    );
+  }
+
   return (
-    <div className="flex flex-1 flex-col">
+    <AnimatePresence mode="popLayout" initial={false}>
+    <motion.div
+      key={qid}
+      initial={{ opacity: 0, y: 44, scale: 0.98 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: -30, transition: { duration: 0.15 } }}
+      transition={SLIDE}
+      className="flex flex-1 flex-col"
+    >
       <div className="mb-4 flex items-center gap-3">
         <span className="chip bg-note-lilac/60 text-base">{flat.section.title}</span>
         <span className="chip text-base">
@@ -166,6 +200,7 @@ function LiveStage({ snapshot }: { snapshot: Snapshot }) {
           )}
         </div>
       )}
-    </div>
+    </motion.div>
+    </AnimatePresence>
   );
 }
