@@ -1,0 +1,307 @@
+@import 'tailwindcss';
+
+@theme {
+  /* The facilitator's wall: warm paper, marker ink, sticker accents. */
+  --color-paper: #fff9ee;
+  --color-card: #fffdf7;
+  --color-ink: #23211b;
+  --color-ink-soft: #6f6a5c;
+  --color-ink-faint: #a8a08d;
+  --color-line: #e9e0ca;
+
+  /* Data palette — validated for CVD + contrast, assigned in this fixed order. */
+  --color-data-1: #e4573d;
+  --color-data-2: #b3820e;
+  --color-data-3: #1f9e82;
+  --color-data-4: #3e7fd6;
+  --color-data-5: #8b5cf6;
+  --color-data-6: #c94f9c;
+
+  /* UI accents (never for data). */
+  --color-sun: #ffd23f;
+  --color-coral: #ff6b57;
+  --color-mint: #4fd6b0;
+  --color-sky: #7cc4ff;
+
+  /* Sticky-note stock. */
+  --color-note-yellow: #ffe86b;
+  --color-note-pink: #ffc4d8;
+  --color-note-mint: #baefd4;
+  --color-note-sky: #c3e3ff;
+  --color-note-lilac: #ddd0ff;
+  --color-note-peach: #ffdcb4;
+
+  --font-display: 'Bricolage Grotesque Variable', 'Bricolage Grotesque', sans-serif;
+  --font-sans: 'Outfit Variable', 'Outfit', sans-serif;
+  --font-hand: 'Caveat Variable', 'Caveat', cursive;
+
+  --shadow-pop: 0.25rem 0.25rem 0 0 var(--color-ink);
+  --shadow-pop-sm: 0.1875rem 0.1875rem 0 0 var(--color-ink);
+  --shadow-pop-lg: 0.4rem 0.4rem 0 0 var(--color-ink);
+
+  --radius-blob: 1.25rem;
+
+  --animate-float-up: float-up 3.2s ease-out forwards;
+  --animate-pop-in: pop-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  --animate-wiggle: wiggle 2.2s ease-in-out infinite;
+  --animate-pulse-ring: pulse-ring 1.6s ease-out infinite;
+}
+
+/* ---------- base ---------- */
+
+html {
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  background-color: var(--color-paper);
+}
+
+body {
+  /* Corkboard-lite: a whisper of dot grid so the paper feels physical. */
+  background-image: radial-gradient(circle, rgb(35 33 27 / 0.055) 1px, transparent 1px);
+  background-size: 22px 22px;
+  min-height: 100dvh;
+}
+
+::selection {
+  background: var(--color-sun);
+  color: var(--color-ink);
+}
+
+/* ---------- signature pieces ---------- */
+
+@utility card-pop {
+  background: var(--color-card);
+  border: 2.5px solid var(--color-ink);
+  border-radius: var(--radius-blob);
+  box-shadow: var(--shadow-pop);
+}
+
+@utility btn-pop {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  border: 2.5px solid var(--color-ink);
+  border-radius: 999px;
+  box-shadow: var(--shadow-pop-sm);
+  background: var(--color-card);
+  color: var(--color-ink);
+  padding: 0.55rem 1.15rem;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.06s ease, box-shadow 0.06s ease, background-color 0.15s ease;
+}
+
+.btn-pop:hover:not(:disabled) {
+  transform: translate(-1px, -1px);
+  box-shadow: 0.3rem 0.3rem 0 0 var(--color-ink);
+}
+
+.btn-pop:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 0.05rem 0.05rem 0 0 var(--color-ink);
+}
+
+.btn-pop:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+@utility input-pop {
+  border: 2.5px solid var(--color-ink);
+  border-radius: 0.9rem;
+  background: white;
+  padding: 0.6rem 0.9rem;
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  outline: none;
+  transition: box-shadow 0.12s ease;
+}
+
+.input-pop:focus {
+  box-shadow: 0.2rem 0.2rem 0 0 var(--color-sun), 0.2rem 0.2rem 0 2.5px var(--color-ink);
+}
+
+.input-pop::placeholder {
+  color: var(--color-ink-faint);
+}
+
+@utility chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 2px solid var(--color-ink);
+  border-radius: 999px;
+  padding: 0.2rem 0.7rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  background: white;
+}
+
+/* Sticky notes — Caveat scrawl, believable tilt, folded corner. */
+@utility sticky-note {
+  position: relative;
+  font-family: var(--font-hand);
+  font-size: 1.35rem;
+  line-height: 1.15;
+  padding: 0.9rem 1rem 1.1rem;
+  border-radius: 2px 2px 14px 2px;
+  box-shadow: 2px 3px 0 0 rgb(35 33 27 / 0.28);
+  transform: rotate(var(--tilt, -1.5deg));
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  overflow-wrap: anywhere;
+}
+
+.sticky-note:hover {
+  transform: rotate(0deg) scale(1.04);
+  box-shadow: 3px 5px 0 0 rgb(35 33 27 / 0.32);
+  z-index: 5;
+}
+
+.sticky-note::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: 14px 0 12px 0;
+  background: rgb(35 33 27 / 0.12);
+}
+
+/* ---------- keyframes ---------- */
+
+@keyframes float-up {
+  0% {
+    transform: translateY(0) translateX(0) scale(0.4);
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+    transform: translateY(-4vh) translateX(calc(var(--drift, 0px) * 0.2)) scale(1.15);
+  }
+  20% {
+    transform: translateY(-9vh) translateX(calc(var(--drift, 0px) * 0.45)) scale(1);
+  }
+  100% {
+    transform: translateY(-46vh) translateX(var(--drift, 0px)) scale(0.9);
+    opacity: 0;
+  }
+}
+
+@keyframes pop-in {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: rotate(-2deg);
+  }
+  50% {
+    transform: rotate(2.5deg);
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0.1875rem 0.1875rem 0 0 var(--color-ink), 0 0 0 0 rgb(228 87 61 / 0.65);
+  }
+  100% {
+    box-shadow: 0.1875rem 0.1875rem 0 0 var(--color-ink), 0 0 0 14px rgb(228 87 61 / 0);
+  }
+}
+
+@keyframes bounce-dot {
+  0%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-8px);
+  }
+}
+
+.thinking-dots span {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: var(--color-ink);
+  margin-right: 5px;
+  animation: bounce-dot 1.2s infinite;
+}
+
+.thinking-dots span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.thinking-dots span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+/* The big fat slider */
+.slider-fat {
+  appearance: none;
+  height: 22px;
+  border: 2.5px solid var(--color-ink);
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--color-note-sky), var(--color-card), var(--color-note-pink));
+  cursor: pointer;
+}
+
+.slider-fat::-webkit-slider-thumb {
+  appearance: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  background: var(--color-sun);
+  border: 3px solid var(--color-ink);
+  box-shadow: 0.15rem 0.15rem 0 0 var(--color-ink);
+  cursor: grab;
+  transition: transform 0.1s ease;
+}
+
+.slider-fat::-webkit-slider-thumb:hover {
+  transform: scale(1.12);
+}
+
+.slider-fat::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.2);
+}
+
+.slider-fat::-moz-range-thumb {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  background: var(--color-sun);
+  border: 3px solid var(--color-ink);
+  box-shadow: 0.15rem 0.15rem 0 0 var(--color-ink);
+  cursor: grab;
+}
+
+/* Big display type helper */
+@utility display-type {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.04;
+  text-wrap: balance;
+}
+
+/* Scrollbars that match the vibe */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-ink-faint) transparent;
+}

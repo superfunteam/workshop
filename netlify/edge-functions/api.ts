@@ -444,7 +444,7 @@ async function syncOnce(store: Store, code: string, url: URL): Promise<Response>
   const room = await cachedRoom(store, code, version);
   if (!room) return bad('room not found', 404);
   const full = url.searchParams.get('full') === '1';
-  const snapshotRoom = full ? await loadFullRoom(store, code, { allAnswers: true }) : room;
+  const snapshotRoom = full ? await loadFullRoom(store, code, { allAnswers: true, allEvents: true }) : room;
   if (!snapshotRoom) return bad('room not found', 404);
   return json(shapeSnapshot(snapshotRoom, role, pid, { revealAll: full }));
 }
