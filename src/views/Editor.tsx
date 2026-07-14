@@ -1,4 +1,8 @@
-// Author the workshop: sections, questions, presenter notes. Autosaves.
+// Author the workshop. Designed to be readable at a glance:
+//   sticky header  →  name, save state, share links, open host view
+//   the deck       →  numbered questions in section groups, controls on hover
+//   expanded card  →  type banner, the essential fields, then "extras"
+// Autosaves ~800ms after the last keystroke.
 
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -95,9 +99,6 @@ export default function Editor({ code }: { code: string }) {
     );
   }
 
-  const joinUrl = `${location.origin}/${code}`;
-  const hostUrl = `${location.origin}/host/${code}?key=${hostKey}`;
-
   const update = (fn: (d: Draft) => Draft) => setDraft((prev) => (prev ? fn(prev) : prev));
 
   const moveIn = <T,>(list: T[], i: number, delta: number): T[] => {
@@ -108,48 +109,67 @@ export default function Editor({ code }: { code: string }) {
     return next;
   };
 
+  const totalQuestions = draft.sections.reduce((n, s) => n + s.questions.length, 0);
+  // Running question number across the whole deck, matching the live "3 of 8".
+  const numberBefore = (sIdx: number, qIdx: number) =>
+    draft.sections.slice(0, sIdx).reduce((n, s) => n + s.questions.length, 0) + qIdx + 1;
+
+  const addSection = (at?: number) =>
+    update((d) => {
+      const next = [...d.sections];
+      next.splice(at ?? next.length, 0, { id: rid(8), title: `Section ${next.length + 1}`, questions: [] });
+      return { ...d, sections: next };
+    });
+
   return (
-    <div className="mx-auto max-w-3xl px-5 py-8">
-      <header className="mb-8">
-        <div className="mb-4 flex flex-wrap items-center gap-2">
-          <Link to="/" className="btn-pop px-3 py-1 text-sm"><Icon name="arrow_back" size={15} /> Home</Link>
-          <span className="chip bg-ink/5 font-mono tracking-widest">{code}</span>
-          <span className={`text-sm font-semibold ${saveState === 'error' ? 'text-coral' : 'text-ink-soft'}`}>
-            {saveState === 'saved' && 'saved ✓'}
-            {saveState === 'saving' && 'saving…'}
-            {saveState === 'dirty' && '…'}
-            {saveState === 'error' && 'couldn’t save — check connection'}
-          </span>
-          <div className="ml-auto flex flex-wrap gap-1.5">
-            <CopyButton icon="link" label="Join link" value={joinUrl} />
-            <CopyButton icon="key" label="Host link" value={hostUrl} />
-            <Link to={`/host/${code}`} className="btn-pop bg-ink text-white hover:bg-ink/90 px-3 py-1 text-sm">Open host view →</Link>
-          </div>
-        </div>
-        <input
-          className="input-pop display-type w-full text-3xl"
-          value={draft.name}
-          maxLength={120}
-          onChange={(e) => update((d) => ({ ...d, name: e.target.value }))}
-        />
-        <label className="mt-3 inline-flex cursor-pointer items-center gap-2 text-sm font-semibold text-ink-soft">
+    <div className="min-h-dvh">
+      {/* ---------- sticky header: everything you need, one glance ---------- */}
+      <header className="sticky top-0 z-30 border-b border-line bg-white/95 backdrop-blur">
+        <div className="mx-auto flex max-w-3xl items-center gap-2 px-5 py-2.5">
+          <Link to="/" className="btn-pop h-9 w-9 shrink-0 p-0" aria-label="home">
+            <Icon name="arrow_back" size={17} />
+          </Link>
           <input
-            type="checkbox"
-            checked={draft.autoReveal}
-            onChange={(e) => update((d) => ({ ...d, autoReveal: e.target.checked }))}
+            className="display-type min-w-0 flex-1 rounded-lg bg-transparent px-2 py-1 text-xl outline-none hover:bg-ink/[0.04] focus:bg-ink/[0.04]"
+            value={draft.name}
+            maxLength={120}
+            aria-label="workshop name"
+            onChange={(e) => update((d) => ({ ...d, name: e.target.value }))}
           />
-          Auto-reveal results the moment everyone has answered
-        </label>
+          <SaveBadge state={saveState} />
+          <ShareMenu code={code} hostKey={hostKey} />
+          <Link to={`/host/${code}`} className="btn-pop bg-ink text-white hover:bg-ink/90 shrink-0 px-3.5 py-1.5 text-sm">
+            Open host view →
+          </Link>
+        </div>
+        <div className="mx-auto flex max-w-3xl items-center gap-3 px-5 pb-2 text-xs font-semibold text-ink-soft">
+          <span className="chip bg-ink/5 px-2 py-0.5 font-mono text-[11px] tracking-widest">{code}</span>
+          <span>{draft.sections.length} sections · {totalQuestions} questions</span>
+          <label className="ml-auto inline-flex cursor-pointer items-center gap-1.5">
+            <input
+              type="checkbox"
+              checked={draft.autoReveal}
+              onChange={(e) => update((d) => ({ ...d, autoReveal: e.target.checked }))}
+            />
+            auto-reveal when everyone’s answered
+          </label>
+        </div>
       </header>
 
-      <div className="flex flex-col gap-8">
+      {/* ---------- the deck ---------- */}
+      <main className="mx-auto max-w-3xl px-5 pt-6 pb-16">
         {draft.sections.map((section, sIdx) => (
-          <section key={section.id} className="card-pop p-5">
-            <div className="mb-4 flex items-center gap-2">
+          <section key={section.id} className="group/section mb-2">
+            {/* section header */}
+            <div className="mb-2 flex items-center gap-2 pt-4">
+              <span className="text-[11px] font-semibold tracking-widest text-ink-faint uppercase">
+                Section {sIdx + 1}
+              </span>
               <input
-                className="input-pop display-type min-w-0 flex-1 text-xl"
+                className="display-type min-w-0 flex-1 rounded-lg bg-transparent px-2 py-0.5 text-lg outline-none hover:bg-ink/[0.04] focus:bg-ink/[0.04]"
                 value={section.title}
                 maxLength={120}
+                aria-label={`section ${sIdx + 1} title`}
                 onChange={(e) =>
                   update((d) => ({
                     ...d,
@@ -157,7 +177,7 @@ export default function Editor({ code }: { code: string }) {
                   }))
                 }
               />
-              <RowButtons
+              <HoverControls
                 onUp={sIdx > 0 ? () => update((d) => ({ ...d, sections: moveIn(d.sections, sIdx, -1) })) : undefined}
                 onDown={sIdx < draft.sections.length - 1 ? () => update((d) => ({ ...d, sections: moveIn(d.sections, sIdx, 1) })) : undefined}
                 onDelete={() => {
@@ -165,14 +185,17 @@ export default function Editor({ code }: { code: string }) {
                     update((d) => ({ ...d, sections: d.sections.filter((_, i) => i !== sIdx) }));
                   }
                 }}
+                parentGroup="section"
               />
             </div>
 
-            <div className="flex flex-col gap-3">
+            {/* questions */}
+            <div className="flex flex-col gap-2">
               {section.questions.map((q, qIdx) => (
                 <QuestionCard
                   key={q.id}
                   question={q}
+                  number={numberBefore(sIdx, qIdx)}
                   onChange={(next) =>
                     update((d) => ({
                       ...d,
@@ -196,59 +219,60 @@ export default function Editor({ code }: { code: string }) {
                   }
                 />
               ))}
-            </div>
 
-            <AddQuestion
-              onAdd={(type) =>
-                update((d) => ({
-                  ...d,
-                  sections: d.sections.map((s, i) =>
-                    i === sIdx ? { ...s, questions: [...s.questions, blankQuestion(type)] } : s,
-                  ),
-                }))
-              }
-            />
+              <AddQuestion
+                sectionTitle={section.title}
+                onAdd={(type) =>
+                  update((d) => ({
+                    ...d,
+                    sections: d.sections.map((s, i) =>
+                      i === sIdx ? { ...s, questions: [...s.questions, blankQuestion(type)] } : s,
+                    ),
+                  }))
+                }
+              />
+            </div>
           </section>
         ))}
-      </div>
 
-      <button
-        type="button"
-        className="btn-pop mt-6 w-full border-dashed py-3"
-        onClick={() => update((d) => ({ ...d, sections: [...d.sections, { id: rid(8), title: `Section ${d.sections.length + 1}`, questions: [] }] }))}
-      >
-        <Icon name="add" size={18} /> Add a section
-      </button>
-
-      <footer className="mt-12 flex items-center justify-between border-t border-dashed border-ink-faint pt-6">
         <button
           type="button"
-          className="btn-pop text-sm"
-          onClick={() => {
-            void api.duplicate(code, hostKey, `${draft.name} (copy)`).then((room) => {
-              session.saveHostKey(room.code, room.hostKey);
-              session.touchRecent({ code: room.code, name: `${draft.name} (copy)`, role: 'host' });
-              nav(`/edit/${room.code}`);
-            });
-          }}
+          className="mt-6 w-full cursor-pointer rounded-xl border border-dashed border-ink-faint py-2.5 text-sm font-semibold text-ink-soft transition-colors hover:border-ink hover:text-ink"
+          onClick={() => addSection()}
         >
-          <Icon name="library_add" size={16} /> Duplicate room
+          <Icon name="add" size={15} /> Add a section
         </button>
-        <button
-          type="button"
-          className="btn-pop bg-coral text-sm text-white"
-          onClick={() => {
-            if (confirm('Delete this room and ALL its data? This can’t be undone.')) {
-              void api.deleteRoom(code, hostKey).then(() => {
-                session.forgetRecent(code);
-                nav('/');
+
+        <footer className="mt-14 flex items-center justify-between border-t border-line pt-5 text-sm">
+          <button
+            type="button"
+            className="cursor-pointer font-semibold text-ink-soft underline-offset-2 hover:underline"
+            onClick={() => {
+              void api.duplicate(code, hostKey, `${draft.name} (copy)`).then((room) => {
+                session.saveHostKey(room.code, room.hostKey);
+                session.touchRecent({ code: room.code, name: `${draft.name} (copy)`, role: 'host' });
+                nav(`/edit/${room.code}`);
               });
-            }
-          }}
-        >
-          <Icon name="delete" size={16} /> Delete room
-        </button>
-      </footer>
+            }}
+          >
+            <Icon name="library_add" size={15} /> Duplicate as template
+          </button>
+          <button
+            type="button"
+            className="cursor-pointer font-semibold text-coral underline-offset-2 hover:underline"
+            onClick={() => {
+              if (confirm('Delete this room and ALL its data? This can’t be undone.')) {
+                void api.deleteRoom(code, hostKey).then(() => {
+                  session.forgetRecent(code);
+                  nav('/');
+                });
+              }
+            }}
+          >
+            <Icon name="delete" size={15} /> Delete room
+          </button>
+        </footer>
+      </main>
     </div>
   );
 }
@@ -257,12 +281,52 @@ function Centered({ children }: { children: React.ReactNode }) {
   return <div className="flex min-h-dvh flex-col items-center justify-center gap-4 px-6 text-center">{children}</div>;
 }
 
-function CopyButton({ icon, label, value }: { icon: string; label: string; value: string }) {
+function SaveBadge({ state }: { state: 'saved' | 'saving' | 'dirty' | 'error' }) {
+  const meta = {
+    saved: { icon: 'cloud_done', text: 'Saved', cls: 'text-ink-soft' },
+    saving: { icon: 'sync', text: 'Saving…', cls: 'text-ink-soft' },
+    dirty: { icon: 'more_horiz', text: '', cls: 'text-ink-faint' },
+    error: { icon: 'cloud_off', text: 'Not saved!', cls: 'text-coral' },
+  }[state];
+  return (
+    <span className={`flex shrink-0 items-center gap-1 text-xs font-semibold ${meta.cls}`} title="changes save automatically">
+      <Icon name={meta.icon} size={15} /> <span className="max-sm:hidden">{meta.text}</span>
+    </span>
+  );
+}
+
+/** Join + host links behind one button — the header stays quiet. */
+function ShareMenu({ code, hostKey }: { code: string; hostKey: string }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const close = (e: MouseEvent) => {
+      if (!ref.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('click', close);
+    return () => document.removeEventListener('click', close);
+  }, []);
+  return (
+    <div className="relative shrink-0" ref={ref}>
+      <button type="button" className="btn-pop px-3.5 py-1.5 text-sm" onClick={() => setOpen(!open)}>
+        <Icon name="ios_share" size={15} /> Share
+      </button>
+      {open && (
+        <div className="card-pop absolute top-full right-0 z-40 mt-1.5 w-72 p-2">
+          <ShareRow icon="link" title="Join link" hint="anyone in the room" value={`${location.origin}/${code}`} />
+          <ShareRow icon="key" title="Host link" hint="keep this one private" value={`${location.origin}/host/${code}?key=${hostKey}`} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ShareRow({ icon, title, hint, value }: { icon: string; title: string; hint: string; value: string }) {
   const [copied, setCopied] = useState(false);
   return (
     <button
       type="button"
-      className="btn-pop px-3 py-1 text-sm"
+      className="flex w-full cursor-pointer items-center gap-2.5 rounded-xl px-2.5 py-2 text-left hover:bg-ink/[0.04]"
       onClick={() => {
         void navigator.clipboard.writeText(value).then(() => {
           setCopied(true);
@@ -270,20 +334,43 @@ function CopyButton({ icon, label, value }: { icon: string; label: string; value
         });
       }}
     >
-      <Icon name={copied ? 'check' : icon} size={15} /> {copied ? 'Copied' : label}
+      <Icon name={copied ? 'check' : icon} size={17} className={copied ? 'text-mint' : 'text-ink-soft'} />
+      <span className="min-w-0 flex-1">
+        <span className="block text-sm font-semibold">{copied ? 'Copied!' : title}</span>
+        <span className="block truncate text-xs font-medium text-ink-soft">{hint}</span>
+      </span>
+      <Icon name="content_copy" size={15} className="text-ink-faint" />
     </button>
   );
 }
 
-function RowButtons({ onUp, onDown, onDelete, onDuplicate }: { onUp?: () => void; onDown?: () => void; onDelete: () => void; onDuplicate?: () => void }) {
+/** Row controls that stay out of the way until you hover the row. */
+function HoverControls({
+  onUp,
+  onDown,
+  onDelete,
+  onDuplicate,
+  parentGroup = 'row',
+}: {
+  onUp?: () => void;
+  onDown?: () => void;
+  onDelete: () => void;
+  onDuplicate?: () => void;
+  parentGroup?: 'row' | 'section';
+}) {
+  const reveal =
+    parentGroup === 'section'
+      ? 'opacity-0 group-hover/section:opacity-100 group-focus-within/section:opacity-100'
+      : 'opacity-0 group-hover/row:opacity-100 group-focus-within/row:opacity-100';
+  const btn = 'flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg text-ink-soft hover:bg-ink/[0.06] hover:text-ink disabled:opacity-30 disabled:cursor-default';
   return (
-    <div className="flex shrink-0 gap-1">
-      <button type="button" className="btn-pop h-8 w-8 p-0" disabled={!onUp} onClick={onUp} aria-label="move up"><Icon name="arrow_upward" size={15} /></button>
-      <button type="button" className="btn-pop h-8 w-8 p-0" disabled={!onDown} onClick={onDown} aria-label="move down"><Icon name="arrow_downward" size={15} /></button>
+    <div className={`flex shrink-0 gap-0.5 transition-opacity max-md:opacity-100 ${reveal}`}>
+      <button type="button" className={btn} disabled={!onUp} onClick={onUp} aria-label="move up"><Icon name="arrow_upward" size={16} /></button>
+      <button type="button" className={btn} disabled={!onDown} onClick={onDown} aria-label="move down"><Icon name="arrow_downward" size={16} /></button>
       {onDuplicate && (
-        <button type="button" className="btn-pop h-8 w-8 p-0" onClick={onDuplicate} aria-label="duplicate"><Icon name="content_copy" size={15} /></button>
+        <button type="button" className={btn} onClick={onDuplicate} aria-label="duplicate"><Icon name="content_copy" size={15} /></button>
       )}
-      <button type="button" className="btn-pop h-8 w-8 p-0 hover:bg-coral hover:text-white" onClick={onDelete} aria-label="delete"><Icon name="close" size={15} /></button>
+      <button type="button" className={`${btn} hover:bg-coral/10 hover:text-coral`} onClick={onDelete} aria-label="delete"><Icon name="delete" size={16} /></button>
     </div>
   );
 }
@@ -314,36 +401,44 @@ function blankQuestion(type: QuestionType): Question {
   }
 }
 
-function AddQuestion({ onAdd }: { onAdd: (t: QuestionType) => void }) {
+function AddQuestion({ sectionTitle, onAdd }: { sectionTitle: string; onAdd: (t: QuestionType) => void }) {
   const [open, setOpen] = useState(false);
+  if (!open) {
+    return (
+      <button
+        type="button"
+        className="w-full cursor-pointer rounded-xl border border-dashed border-ink-faint py-2 text-sm font-semibold text-ink-soft transition-colors hover:border-ink hover:text-ink"
+        onClick={() => setOpen(true)}
+      >
+        <Icon name="add" size={15} /> Add a question to “{sectionTitle}”
+      </button>
+    );
+  }
   return (
-    <div className="mt-4">
-      {!open ? (
-        <button type="button" className="btn-pop border-dashed text-sm" onClick={() => setOpen(true)}>
-          <Icon name="add" size={16} /> Add a question
+    <div className="card-pop p-3">
+      <div className="mb-2 flex items-center justify-between">
+        <span className="text-xs font-semibold tracking-widest text-ink-soft uppercase">Pick a question type</span>
+        <button type="button" className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg text-ink-soft hover:bg-ink/[0.06]" onClick={() => setOpen(false)} aria-label="close">
+          <Icon name="close" size={16} />
         </button>
-      ) : (
-        <div className="card-pop grid grid-cols-2 gap-2 bg-paper p-3 sm:grid-cols-4">
-          {(Object.keys(TYPE_META) as QuestionType[]).map((type) => (
-            <button
-              key={type}
-              type="button"
-              className="cursor-pointer rounded-xl border border-line bg-white p-2.5 text-left transition-all hover:-translate-y-0.5 hover:shadow-pop-sm"
-              onClick={() => {
-                onAdd(type);
-                setOpen(false);
-              }}
-            >
-              <TypeSwatch type={type} size={30} />
-              <div className="mt-1.5 font-display text-sm font-semibold">{TYPE_META[type].label}</div>
-              <div className="text-[11px] font-medium text-ink-soft">{TYPE_META[type].blurb}</div>
-            </button>
-          ))}
-          <button type="button" className="col-span-2 text-xs font-semibold text-ink-soft underline sm:col-span-4" onClick={() => setOpen(false)}>
-            never mind
+      </div>
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+        {(Object.keys(TYPE_META) as QuestionType[]).map((type) => (
+          <button
+            key={type}
+            type="button"
+            className="cursor-pointer rounded-xl border border-line bg-white p-2.5 text-left transition-all hover:-translate-y-0.5 hover:shadow-pop-sm"
+            onClick={() => {
+              onAdd(type);
+              setOpen(false);
+            }}
+          >
+            <TypeSwatch type={type} size={28} />
+            <div className="mt-1.5 text-[13px] leading-tight font-semibold">{TYPE_META[type].label}</div>
+            <div className="mt-0.5 text-[11px] leading-tight font-medium text-ink-soft">{TYPE_META[type].blurb}</div>
           </button>
-        </div>
-      )}
+        ))}
+      </div>
     </div>
   );
 }
@@ -352,6 +447,7 @@ function AddQuestion({ onAdd }: { onAdd: (t: QuestionType) => void }) {
 
 function QuestionCard({
   question,
+  number,
   onChange,
   onUp,
   onDown,
@@ -359,6 +455,7 @@ function QuestionCard({
   onDuplicate,
 }: {
   question: Question;
+  number: number;
   onChange: (q: Question) => void;
   onUp?: () => void;
   onDown?: () => void;
@@ -367,68 +464,88 @@ function QuestionCard({
 }) {
   const [open, setOpen] = useState(question.prompt === '');
   const meta = TYPE_META[question.type];
+  const promptLabel = question.type === 'slide' ? 'Slide title' : question.type === 'discuss' ? 'What should the room talk about?' : 'Question';
 
   return (
     <div
-      className="overflow-hidden rounded-2xl border bg-white transition-shadow"
+      className="group/row overflow-hidden rounded-2xl border bg-white transition-shadow"
       style={{
         borderColor: open ? `${meta.hue}66` : 'var(--color-line)',
         borderLeft: `4px solid ${meta.hue}`,
         boxShadow: open ? `0 8px 24px -10px ${meta.hue}55` : undefined,
       }}
     >
-      <div className="flex items-center gap-2.5 p-3">
-        <TypeSwatch type={question.type} size={34} />
-        <button type="button" className="min-w-0 flex-1 cursor-pointer text-left" onClick={() => setOpen(!open)}>
+      {/* collapsed row — the whole thing is a click target */}
+      <div
+        className="flex cursor-pointer items-center gap-2.5 p-2.5 select-none"
+        onClick={() => setOpen(!open)}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setOpen(!open);
+          }
+        }}
+      >
+        <span className="w-6 shrink-0 text-center text-xs font-semibold tabular-nums text-ink-faint">{number}</span>
+        <TypeSwatch type={question.type} size={32} />
+        <span className="min-w-0 flex-1">
           <span className="block truncate font-semibold">
-            {question.prompt || <span className="text-ink-faint italic">untitled — click to write the prompt</span>}
+            {question.prompt || <span className="text-ink-faint italic">untitled — click to write it</span>}
           </span>
           <span className="block text-[11px] font-semibold tracking-wide uppercase" style={{ color: meta.hue }}>
             {meta.label}
           </span>
-        </button>
-        {question.anonymous && <Icon name="visibility_off" size={16} className="text-ink-faint" />}
-        {question.notes && <Icon name="description" size={16} className="text-ink-faint" />}
-        <button type="button" className="btn-pop h-8 px-2.5 py-0 text-xs" onClick={() => setOpen(!open)}>
-          {open ? 'done' : 'edit'}
-        </button>
-        <RowButtons onUp={onUp} onDown={onDown} onDelete={onDelete} onDuplicate={onDuplicate} />
+        </span>
+        {question.anonymous && <Icon name="visibility_off" size={15} className="shrink-0 text-ink-faint" />}
+        {question.notes && <Icon name="description" size={15} className="shrink-0 text-ink-faint" />}
+        <span onClick={(e) => e.stopPropagation()}>
+          <HoverControls onUp={onUp} onDown={onDown} onDelete={onDelete} onDuplicate={onDuplicate} />
+        </span>
+        <Icon name={open ? 'expand_less' : 'expand_more'} size={20} className="shrink-0 text-ink-soft" />
       </div>
 
       {open && (
         <div className="flex flex-col gap-3 px-3 pt-0 pb-4">
-          <div
-            className="flex items-center gap-3 rounded-xl px-3.5 py-2.5"
-            style={{ background: meta.tint }}
-          >
-            <Icon name={meta.icon} size={22} style={{ color: meta.hue }} />
-            <div className="min-w-0">
-              <div className="text-sm font-semibold" style={{ color: meta.hue }}>
-                Editing a {meta.label} question
-              </div>
-              <div className="text-xs font-medium text-ink-soft">{meta.blurb}</div>
-            </div>
+          <div className="flex items-center gap-3 rounded-xl px-3.5 py-2" style={{ background: meta.tint }}>
+            <Icon name={meta.icon} size={20} style={{ color: meta.hue }} />
+            <span className="text-sm font-semibold" style={{ color: meta.hue }}>
+              {meta.label}
+            </span>
+            <span className="text-xs font-medium text-ink-soft">{meta.blurb}</span>
           </div>
-          <Field label="Question">
+
+          <Field label={promptLabel}>
             <input className="input-pop w-full text-lg" value={question.prompt} maxLength={300} placeholder="Ask the room something…" autoFocus={!question.prompt}
               onChange={(e) => onChange({ ...question, prompt: e.target.value })} />
-          </Field>
-          <Field label="Hint (optional, shows under the question)">
-            <input className="input-pop w-full" value={question.hint ?? ''} maxLength={200}
-              onChange={(e) => onChange({ ...question, hint: e.target.value || undefined })} />
           </Field>
 
           <TypeFields question={question} onChange={onChange} />
 
-          <Field label="Presenter notes (only you see these, in the host dock)">
-            <textarea className="input-pop min-h-16 w-full text-base" value={question.notes ?? ''} maxLength={2000}
-              onChange={(e) => onChange({ ...question, notes: e.target.value || undefined })} />
-          </Field>
-          <label className="inline-flex cursor-pointer items-center gap-2 text-sm font-semibold text-ink-soft">
-            <input type="checkbox" checked={!!question.anonymous}
-              onChange={(e) => onChange({ ...question, anonymous: e.target.checked || undefined })} />
-            <Icon name="visibility_off" size={15} /> Anonymous — hide names on the reveal
-          </label>
+          {/* the optional stuff, visually secondary so the essentials pop */}
+          <div className="rounded-xl bg-paper p-3">
+            <div className="mb-2 text-[11px] font-semibold tracking-widest text-ink-faint uppercase">Extras</div>
+            <div className="flex flex-col gap-3">
+              <Field label="Hint — small line under the question (optional)">
+                <input className="input-pop w-full bg-white" value={question.hint ?? ''} maxLength={200}
+                  onChange={(e) => onChange({ ...question, hint: e.target.value || undefined })} />
+              </Field>
+              <Field label="Presenter notes — only you see these, in the host dock">
+                <textarea className="input-pop min-h-16 w-full bg-white text-base" value={question.notes ?? ''} maxLength={2000}
+                  onChange={(e) => onChange({ ...question, notes: e.target.value || undefined })} />
+              </Field>
+              <label className="inline-flex cursor-pointer items-center gap-2 text-sm font-semibold text-ink-soft">
+                <input type="checkbox" checked={!!question.anonymous}
+                  onChange={(e) => onChange({ ...question, anonymous: e.target.checked || undefined })} />
+                <Icon name="visibility_off" size={15} /> Anonymous — hide names on the reveal
+              </label>
+            </div>
+          </div>
+
+          <button type="button" className="btn-pop self-end px-4 py-1 text-sm" onClick={() => setOpen(false)}>
+            <Icon name="check" size={15} /> Done
+          </button>
         </div>
       )}
     </div>
