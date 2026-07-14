@@ -17,7 +17,7 @@ import { useCelebrations } from '../lib/celebrate.ts';
 import ResultsView from '../components/results/index.tsx';
 import EmoteLayer from '../components/EmoteLayer.tsx';
 import { TimerChip } from '../components/Timer.tsx';
-import { AvatarChip, SyncDot, TypeBadge } from '../components/bits.tsx';
+import { AvatarChip, SyncDot, TYPE_META, TypeBadge } from '../components/bits.tsx';
 import Icon from '../components/Icon.tsx';
 
 export default function HostView({ code }: { code: string }) {
@@ -207,20 +207,23 @@ function Console({ code, hostKey }: { code: string; hostKey: string }) {
                       type="button"
                       whileTap={{ scale: 0.97 }}
                       onClick={() => void act({ action: 'goto', section: sIdx, question: qIdx })}
-                      className="relative cursor-pointer rounded-xl px-2.5 py-1.5 text-left text-sm font-semibold"
+                      className="relative w-full cursor-pointer rounded-xl border border-line bg-white px-2.5 py-2 text-left text-sm font-semibold shadow-pop-sm"
                     >
                       {isCurrent && (
                         <motion.span
                           layoutId="rail-pill"
                           transition={SLIDE}
-                          className="absolute inset-0 rounded-xl border border-line bg-sun shadow-pop-sm"
+                          className="absolute -inset-px rounded-xl border border-sun bg-sun shadow-pop-sm"
                         />
                       )}
-                      <span className={`relative line-clamp-2 ${isCurrent ? '' : 'opacity-80'}`}>{q.prompt}</span>
-                      <span className="relative mt-0.5 flex items-center gap-1.5 text-[11px] text-ink-soft">
-                        {isTalkType(q.type)
-                          ? q.type === 'slide' ? 'slide' : 'discussion'
-                          : state.revealed[q.id] ? 'revealed' : count > 0 ? `${count} answered` : '—'}
+                      <span className={`relative line-clamp-2 ${isCurrent ? '' : 'opacity-90'}`}>{q.prompt}</span>
+                      <span className="relative mt-0.5 flex items-center gap-1.5 text-[11px] font-medium text-ink-soft">
+                        {(() => {
+                          const label = TYPE_META[q.type].label;
+                          if (isTalkType(q.type)) return label;
+                          if (state.revealed[q.id]) return `${label} · revealed`;
+                          return count > 0 ? `${label} · ${count} answered` : label;
+                        })()}
                       </span>
                     </motion.button>
                   );
