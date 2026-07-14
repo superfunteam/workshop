@@ -1,7 +1,8 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
-import '@fontsource-variable/outfit';
+import '@fontsource-variable/public-sans';
+import 'material-symbols/rounded.css';
 import './theme.css';
 import App from './App.tsx';
 

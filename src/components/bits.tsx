@@ -1,18 +1,40 @@
 import type { PublicParticipant, QuestionType } from '../../shared/types.ts';
 import type { SyncStatus } from '../lib/useRoom.ts';
+import Icon from './Icon.tsx';
 
-export const TYPE_META: Record<QuestionType, { label: string; emoji: string; blurb: string }> = {
-  slide: { label: 'Slide', emoji: '🎬', blurb: 'Intro, outro, divider' },
-  choice: { label: 'Multiple choice', emoji: '🔘', blurb: 'Pick from canned answers' },
-  open: { label: 'Open answer', emoji: '💬', blurb: 'Everyone types a response' },
-  postits: { label: 'Post-its', emoji: '🗒️', blurb: 'Notes across categories' },
-  slider: { label: 'Slider', emoji: '🎚️', blurb: 'Between two poles' },
-  discuss: { label: 'Discussion', emoji: '🗣️', blurb: 'Talk it out, no typing' },
-  inspo: { label: 'Inspo board', emoji: '🖼️', blurb: 'Paste links & images' },
-  wordcloud: { label: 'Word cloud', emoji: '☁️', blurb: 'A few words each' },
-  dotvote: { label: 'Dot vote', emoji: '🔴', blurb: 'Spend sticker dots' },
-  rank: { label: 'Ranking', emoji: '🏆', blurb: 'Order by priority' },
+/**
+ * One identity per question type: Material Symbol, label, blurb, and a hue.
+ * The hue follows the type everywhere — badges, the editor picker, the
+ * editing banner — so you always know what kind of question you're looking at.
+ */
+export const TYPE_META: Record<
+  QuestionType,
+  { label: string; icon: string; blurb: string; hue: string; tint: string }
+> = {
+  slide: { label: 'Slide', icon: 'slideshow', blurb: 'Intro, outro, divider', hue: '#8b5cf6', tint: '#8b5cf61a' },
+  choice: { label: 'Multiple choice', icon: 'radio_button_checked', blurb: 'Pick from canned answers', hue: '#3e7fd6', tint: '#3e7fd61a' },
+  open: { label: 'Open answer', icon: 'edit_note', blurb: 'Everyone types a response', hue: '#1f9e82', tint: '#1f9e821a' },
+  postits: { label: 'Post-its', icon: 'sticky_note_2', blurb: 'Notes across categories', hue: '#b3820e', tint: '#b3820e1a' },
+  slider: { label: 'Slider', icon: 'tune', blurb: 'Between two poles', hue: '#c94f9c', tint: '#c94f9c1a' },
+  discuss: { label: 'Discussion', icon: 'forum', blurb: 'Talk it out, no typing', hue: '#e4573d', tint: '#e4573d1a' },
+  inspo: { label: 'Inspo board', icon: 'photo_library', blurb: 'Paste links & images', hue: '#3e7fd6', tint: '#3e7fd61a' },
+  wordcloud: { label: 'Word cloud', icon: 'cloud', blurb: 'A few words each', hue: '#1f9e82', tint: '#1f9e821a' },
+  dotvote: { label: 'Dot vote', icon: 'scatter_plot', blurb: 'Spend sticker dots', hue: '#e4573d', tint: '#e4573d1a' },
+  rank: { label: 'Ranking', icon: 'format_list_numbered', blurb: 'Order by priority', hue: '#b3820e', tint: '#b3820e1a' },
 };
+
+/** Squared icon swatch in the type's hue — the visual anchor for a type. */
+export function TypeSwatch({ type, size = 34 }: { type: QuestionType; size?: number }) {
+  const meta = TYPE_META[type];
+  return (
+    <span
+      className="inline-flex shrink-0 items-center justify-center rounded-xl"
+      style={{ width: size, height: size, background: meta.tint, color: meta.hue }}
+    >
+      <Icon name={meta.icon} size={Math.round(size * 0.58)} />
+    </span>
+  );
+}
 
 /** Fixed-order data palette (validated); options wear these in order. */
 export const DATA_COLORS = ['#e4573d', '#b3820e', '#1f9e82', '#3e7fd6', '#8b5cf6', '#c94f9c'];
@@ -31,8 +53,8 @@ export function tiltFor(id: string): string {
 export function TypeBadge({ type }: { type: QuestionType }) {
   const meta = TYPE_META[type];
   return (
-    <span className="chip bg-white text-xs">
-      <span aria-hidden>{meta.emoji}</span> {meta.label}
+    <span className="chip text-xs" style={{ background: meta.tint, borderColor: `${meta.hue}55`, color: meta.hue }}>
+      <Icon name={meta.icon} size={14} /> {meta.label}
     </span>
   );
 }
@@ -53,7 +75,7 @@ export function AvatarChip({ p, state }: { p: PublicParticipant; state?: 'done' 
         {p.avatar}
       </span>
       <span className="max-w-28 truncate">{p.name}</span>
-      {state === 'done' && <span aria-label="answered">✓</span>}
+      {state === 'done' && <Icon name="check" size={14} style={{ color: '#1f9e82' }} />}
       {state === 'waiting' && <span className="animate-pulse" aria-label="still thinking">…</span>}
     </span>
   );

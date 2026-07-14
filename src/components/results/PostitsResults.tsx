@@ -22,7 +22,7 @@ export default function PostitsResults({ question, answers, participants, big }:
         <section key={group.index} className="card-pop p-4" style={{ background: `${noteColor(group.index)}2e` }}>
           <h3 className={`display-type mb-3 flex items-baseline justify-between ${big ? 'text-3xl' : 'text-xl'}`}>
             {group.category}
-            <span className="font-sans text-sm font-bold text-ink-soft">{group.notes.length}</span>
+            <span className="font-sans text-sm font-semibold text-ink-soft">{group.notes.length}</span>
           </h3>
           <div className="flex flex-col gap-3">
             {group.notes.map((note, i) => {
@@ -42,7 +42,7 @@ export default function PostitsResults({ question, answers, participants, big }:
                 >
                   {note.text}
                   {author && (
-                    <div className="mt-1 text-right font-sans text-[10px] font-bold text-ink/50">
+                    <div className="mt-1 text-right font-sans text-[10px] font-semibold text-ink/50">
                       {author.avatar} {author.name}
                     </div>
                   )}

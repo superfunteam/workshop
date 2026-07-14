@@ -8,6 +8,7 @@ import { api } from '../lib/api.ts';
 import { session } from '../lib/session.ts';
 import ResultsView from '../components/results/index.tsx';
 import { TypeBadge } from '../components/bits.tsx';
+import Icon from '../components/Icon.tsx';
 
 export default function RecapView({ code }: { code: string }) {
   const [snap, setSnap] = useState<Snapshot | null>(null);
@@ -63,15 +64,15 @@ export default function RecapView({ code }: { code: string }) {
       <header className="mb-10 text-center">
         <p className="font-semibold text-xl text-ink-soft">the full recap of</p>
         <h1 className="display-type text-5xl sm:text-6xl">{snap.config.name}</h1>
-        <p className="mt-2 text-sm font-bold text-ink-soft">
+        <p className="mt-2 text-sm font-semibold text-ink-soft">
           {new Date(snap.config.createdAt).toLocaleDateString(undefined, { dateStyle: 'long' })} · room {code}
         </p>
         <div className="mt-5 flex flex-wrap justify-center gap-2">
-          <a className="btn-pop bg-sun" href={api.exportUrl(code, 'md')}>⬇ Markdown</a>
-          <a className="btn-pop" href={api.exportUrl(code, 'csv')}>⬇ CSV</a>
+          <a className="btn-pop bg-sun" href={api.exportUrl(code, 'md')}><Icon name="download" size={16} /> Markdown</a>
+          <a className="btn-pop" href={api.exportUrl(code, 'csv')}><Icon name="download" size={16} /> CSV</a>
           {hostKey && (
             <button type="button" className="btn-pop" onClick={() => void duplicate()}>
-              🧬 Duplicate as template
+              <Icon name="library_add" size={16} /> Duplicate as template
             </button>
           )}
         </div>
@@ -112,8 +113,8 @@ export default function RecapView({ code }: { code: string }) {
               <article key={q.id}>
                 <div className="mb-2 flex flex-wrap items-center gap-2">
                   <TypeBadge type={q.type} />
-                  {q.anonymous && <span className="chip bg-note-pink/60 text-xs">🕶 anonymous</span>}
-                  <span className="text-xs font-bold text-ink-soft">
+                  {q.anonymous && <span className="chip bg-note-pink/60 text-xs"><Icon name="visibility_off" size={14} /> anonymous</span>}
+                  <span className="text-xs font-semibold text-ink-soft">
                     {snap.answers[q.id]?.answeredPids.length ?? 0} answered
                   </span>
                 </div>
@@ -133,7 +134,7 @@ export default function RecapView({ code }: { code: string }) {
       )}
 
       <footer className="pb-10 text-center">
-        <Link to="/" className="text-sm font-bold text-ink-soft underline">← Home</Link>
+        <Link to="/" className="text-sm font-semibold text-ink-soft underline">← Home</Link>
       </footer>
     </div>
   );
@@ -143,7 +144,7 @@ function Stat({ n, label }: { n: number; label: string }) {
   return (
     <div>
       <div className="display-type text-4xl">{n}</div>
-      <div className="text-xs font-extrabold tracking-wide text-ink-soft uppercase">{label}</div>
+      <div className="text-xs font-semibold tracking-wide text-ink-soft uppercase">{label}</div>
     </div>
   );
 }

@@ -26,7 +26,7 @@ export default function WordcloudInput({
         {words.map((word, i) => (
           <input
             key={i}
-            className="input-pop text-center font-display text-2xl font-bold"
+            className="input-pop text-center font-display text-2xl font-semibold"
             placeholder={['One word…', 'Another…', 'One more…', 'Keep going…', 'Last one…'][i] ?? 'Word…'}
             value={word}
             maxLength={24}

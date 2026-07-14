@@ -23,7 +23,7 @@ export default function BarResults({
     <motion.div variants={staggerParent(0.07)} initial="hidden" animate="show" className="flex w-full flex-col gap-4">
       {tallies.map((t, rank) => (
         <motion.div key={t.index} variants={riseChild}>
-          <div className={`mb-1 flex items-baseline justify-between gap-3 font-display font-bold ${big ? 'text-3xl' : 'text-lg'}`}>
+          <div className={`mb-1 flex items-baseline justify-between gap-3 font-display font-semibold ${big ? 'text-3xl' : 'text-lg'}`}>
             <span>
               {rank === 0 && t.count > 0 && (
                 <motion.span

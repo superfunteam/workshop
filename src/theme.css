@@ -31,8 +31,8 @@
   --color-note-lilac: #ddd0ff;
   --color-note-peach: #ffdcb4;
 
-  --font-display: 'Outfit Variable', 'Outfit', sans-serif;
-  --font-sans: 'Outfit Variable', 'Outfit', sans-serif;
+  --font-display: 'Public Sans Variable', 'Public Sans', sans-serif;
+  --font-sans: 'Public Sans Variable', 'Public Sans', sans-serif;
 
   /* Soft, lifted shadows — fun lives in the color and motion, not the ink. */
   --shadow-pop: 0 10px 24px -10px rgb(35 33 27 / 0.18), 0 2px 6px -2px rgb(35 33 27 / 0.08);
@@ -82,7 +82,7 @@ body {
   justify-content: center;
   gap: 0.5rem;
   font-family: var(--font-display);
-  font-weight: 700;
+  font-weight: 600;
   border: 1px solid var(--color-line);
   border-radius: 999px;
   box-shadow: var(--shadow-pop-sm);
@@ -295,13 +295,31 @@ body {
   cursor: grab;
 }
 
-/* Big display type helper */
+/* Big display type helper — semibold is the heaviest weight in the system */
 @utility display-type {
   font-family: var(--font-display);
-  font-weight: 700;
-  letter-spacing: -0.025em;
-  line-height: 1.06;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.08;
   text-wrap: balance;
+}
+
+/* Material Symbols defaults: rounded, filled, optically sized for chips/buttons */
+@utility icon {
+  font-family: 'Material Symbols Rounded';
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  display: inline-block;
+  vertical-align: -0.15em;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
 }
 
 /* Scrollbars that match the vibe */

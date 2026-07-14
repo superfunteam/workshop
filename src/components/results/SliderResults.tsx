@@ -26,7 +26,7 @@ export default function SliderResults({ question, answers, participants, big }: 
 
   return (
     <div className="w-full py-4">
-      <div className={`mb-10 flex justify-between font-display font-bold ${big ? 'text-4xl' : 'text-xl'}`}>
+      <div className={`mb-10 flex justify-between font-display font-semibold ${big ? 'text-4xl' : 'text-xl'}`}>
         <span>← {question.left}</span>
         <span>{question.right} →</span>
       </div>
@@ -68,7 +68,7 @@ export default function SliderResults({ question, answers, participants, big }: 
           style={{ left: `${stats.average}%` }}
         >
           <div className="mx-auto h-8 w-1 rounded bg-ink" />
-          <div className={`card-pop mt-1 bg-sun px-3 py-1 font-display font-extrabold whitespace-nowrap ${big ? 'text-2xl' : 'text-base'}`}>
+          <div className={`card-pop mt-1 bg-sun px-3 py-1 font-display font-semibold whitespace-nowrap ${big ? 'text-2xl' : 'text-base'}`}>
             avg {stats.average}
           </div>
         </motion.div>

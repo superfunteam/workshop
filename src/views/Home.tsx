@@ -67,7 +67,7 @@ export default function Home() {
         <section className="card-pop flex flex-col gap-4 bg-note-sky/30 p-6">
           <h2 className="display-type text-2xl">Joining one?</h2>
           <input
-            className="input-pop text-center font-display text-3xl font-extrabold tracking-[0.35em] uppercase"
+            className="input-pop text-center font-display text-3xl font-semibold tracking-[0.35em] uppercase"
             placeholder="CODE"
             value={code}
             maxLength={8}
@@ -89,7 +89,7 @@ export default function Home() {
             {recents.map((room) => (
               <div key={room.code} className="card-pop flex items-center gap-3 p-4">
                 <div className="min-w-0 flex-1">
-                  <div className="truncate font-display text-lg font-bold">{room.name}</div>
+                  <div className="truncate font-display text-lg font-semibold">{room.name}</div>
                   <div className="text-xs font-semibold text-ink-soft">
                     {room.code} · {room.role === 'host' ? 'you host this one' : 'participant'} ·{' '}
                     {new Date(room.at).toLocaleDateString()}

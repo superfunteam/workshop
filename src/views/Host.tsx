@@ -18,6 +18,7 @@ import ResultsView from '../components/results/index.tsx';
 import EmoteLayer from '../components/EmoteLayer.tsx';
 import { TimerChip } from '../components/Timer.tsx';
 import { AvatarChip, SyncDot, TypeBadge } from '../components/bits.tsx';
+import Icon from '../components/Icon.tsx';
 
 export default function HostView({ code }: { code: string }) {
   const [params, setParams] = useSearchParams();
@@ -61,7 +62,7 @@ function NeedKey({ code, onKey }: { code: string; onKey: (k: string) => void }) 
           Unlock
         </button>
       </div>
-      <Link to="/" className="text-sm font-bold text-ink-soft underline">← Home</Link>
+      <Link to="/" className="text-sm font-semibold text-ink-soft underline">← Home</Link>
     </div>
   );
 }
@@ -131,22 +132,22 @@ function Console({ code, hostKey }: { code: string; hostKey: string }) {
     <div className="flex h-dvh flex-col overflow-hidden">
       {/* top bar */}
       <header className="flex flex-wrap items-center gap-2 border-b border-line bg-card px-4 py-2.5">
-        <span className="font-display text-lg font-extrabold">{config.name}</span>
+        <span className="font-display text-lg font-semibold">{config.name}</span>
         <span className="chip bg-sun/50 font-mono tracking-widest">{code}</span>
         <SyncDot status={status} />
-        <span className="chip">✋ {online.length} in the room</span>
+        <span className="chip"><Icon name="groups" size={16} /> {online.length} in the room</span>
         <TimerChip timer={state.timer} serverNow={serverNow} />
         <div className="ml-auto flex flex-wrap items-center gap-1.5">
           {state.phase === 'lobby' && (
             <button type="button" className="btn-pop animate-pulse-ring bg-sun" disabled={busy} onClick={() => void act({ action: 'start' })}>
-              ▶ Start the show
+              <Icon name="play_arrow" size={16} /> Start the show
             </button>
           )}
           {state.phase === 'live' && (
             <>
               <TimerMenu onStart={(s) => void act({ action: 'timer', seconds: s })} onClear={() => void act({ action: 'clearTimer' })} hasTimer={!!state.timer} />
               <button type="button" className="btn-pop text-sm" disabled={busy} onClick={() => void act({ action: 'phase', phase: 'break' })}>
-                ☕ Break
+                <Icon name="coffee" size={16} /> Break
               </button>
               <button
                 type="button"
@@ -156,7 +157,7 @@ function Console({ code, hostKey }: { code: string; hostKey: string }) {
                   if (confirm('End the workshop for everyone?')) void act({ action: 'phase', phase: 'ended' });
                 }}
               >
-                🏁 End
+                <Icon name="flag" size={16} /> End
               </button>
             </>
           )}
@@ -174,16 +175,16 @@ function Console({ code, hostKey }: { code: string; hostKey: string }) {
             auto-reveal
           </label>
           <a className="btn-pop text-sm" href={`/stage/${code}`} target="_blank" rel="noreferrer">
-            📽 Stage
+            <Icon name="present_to_all" size={16} /> Stage
           </a>
           <Link className="btn-pop text-sm" to={`/edit/${code}`}>
-            ✏️ Edit
+            <Icon name="edit" size={16} /> Edit
           </Link>
           <a className="btn-pop text-sm" href={api.exportUrl(code, 'md')}>
-            ⬇ MD
+            <Icon name="download" size={16} /> MD
           </a>
           <a className="btn-pop text-sm" href={api.exportUrl(code, 'csv')}>
-            ⬇ CSV
+            <Icon name="download" size={16} /> CSV
           </a>
         </div>
       </header>
@@ -193,7 +194,7 @@ function Console({ code, hostKey }: { code: string; hostKey: string }) {
         <nav className="w-64 shrink-0 overflow-y-auto border-r border-line bg-paper/60 p-3">
           {config.sections.map((sec, sIdx) => (
             <div key={sec.id} className="mb-4">
-              <div className="mb-1.5 px-1 font-display text-xs font-extrabold tracking-wide text-ink-soft uppercase">
+              <div className="mb-1.5 px-1 font-display text-xs font-semibold tracking-wide text-ink-soft uppercase">
                 {sec.title}
               </div>
               <div className="flex flex-col gap-1.5">
@@ -218,8 +219,8 @@ function Console({ code, hostKey }: { code: string; hostKey: string }) {
                       <span className={`relative line-clamp-2 ${isCurrent ? '' : 'opacity-80'}`}>{q.prompt}</span>
                       <span className="relative mt-0.5 flex items-center gap-1.5 text-[11px] text-ink-soft">
                         {isTalkType(q.type)
-                          ? q.type === 'slide' ? '🎬 slide' : '🗣️ discussion'
-                          : state.revealed[q.id] ? '👁 revealed' : count > 0 ? `${count} answered` : '—'}
+                          ? q.type === 'slide' ? 'slide' : 'discussion'
+                          : state.revealed[q.id] ? 'revealed' : count > 0 ? `${count} answered` : '—'}
                       </span>
                     </motion.button>
                   );
@@ -245,16 +246,16 @@ function Console({ code, hostKey }: { code: string; hostKey: string }) {
                   <span className="chip bg-note-lilac/60">{flat.section.title}</span>
                   <span className="chip">{flat.n + 1} of {flat.total}</span>
                   <TypeBadge type={flat.question.type} />
-                  {flat.question.anonymous && <span className="chip bg-note-pink/60">🕶 anonymous</span>}
+                  {flat.question.anonymous && <span className="chip bg-note-pink/60"><Icon name="visibility_off" size={14} /> anonymous</span>}
                 </div>
                 <h1 className="display-type mb-4 text-3xl">{flat.question.prompt}</h1>
 
                 {/* HUD: who's in */}
                 <div className="card-pop mb-4 p-3">
                   <div className="mb-2 flex items-center justify-between">
-                    <span className="text-sm font-extrabold text-ink-soft">
+                    <span className="text-sm font-semibold text-ink-soft">
                       {talk ? (
-                        flat.question.type === 'slide' ? '🎬 Slide — advance when the room’s ready' : '🗣️ Discussion — scratchpad it, then advance'
+                        flat.question.type === 'slide' ? 'Slide — advance when the room’s ready' : 'Discussion — scratchpad it, then advance'
                       ) : (
                         <>
                           {onlineAnswered(snapshot.participants, answeredPids)} of {online.length} answered
@@ -275,11 +276,11 @@ function Console({ code, hostKey }: { code: string; hostKey: string }) {
                             disabled={busy}
                             onClick={() => void act({ action: 'reveal', qid })}
                           >
-                            👁 Reveal answers
+                            <Icon name="visibility" size={16} /> Reveal answers
                           </motion.button>
                         ) : (
                           <motion.button whileTap={{ scale: 0.95 }} type="button" className="btn-pop px-3 py-1 text-sm" disabled={busy} onClick={() => void act({ action: 'reopen', qid })}>
-                            🙈 Hide again
+                            <Icon name="visibility_off" size={16} /> Hide again
                           </motion.button>
                         ))}
                       <motion.button whileTap={{ scale: 0.95 }} type="button" className="btn-pop bg-sun px-3 py-1 text-sm" disabled={busy} onClick={() => void act({ action: 'next' })}>
@@ -322,7 +323,7 @@ function Console({ code, hostKey }: { code: string; hostKey: string }) {
                 )}
                 {!talk && (
                   <div className={`card-pop mb-4 p-4 ${revealed ? 'bg-note-mint/20' : 'bg-white'}`}>
-                    <div className="mb-2 flex items-center justify-between text-xs font-extrabold tracking-wide text-ink-soft uppercase">
+                    <div className="mb-2 flex items-center justify-between text-xs font-semibold tracking-wide text-ink-soft uppercase">
                       <span>{revealed ? 'Revealed to the room' : 'Live peek (only you see this)'}</span>
                       <span className="font-sans normal-case">{summarize(flat.question, snapshot.answers[qid]?.answers ?? [])}</span>
                     </div>
@@ -365,7 +366,7 @@ function LobbyPanel({ code, online }: { code: string; online: number }) {
     <div className="card-pop flex flex-col items-center gap-4 bg-note-yellow/30 p-8 text-center">
       <h1 className="display-type text-3xl">Doors are open 🚪</h1>
       <p className="font-semibold text-ink-soft">
-        Send people to <span className="font-mono font-bold text-ink">{joinUrl}</span> — or throw the stage view on the projector; it has a QR code.
+        Send people to <span className="font-mono font-semibold text-ink">{joinUrl}</span> — or throw the stage view on the projector; it has a QR code.
       </p>
       <p className="font-semibold text-xl">{online === 0 ? 'waiting for the first arrival…' : `${online} in the room so far`}</p>
       <p className="text-sm font-semibold text-ink-soft">Hit “Start the show” up top when the room’s ready.</p>
@@ -386,7 +387,7 @@ function TimerMenu({ onStart, onClear, hasTimer }: { onStart: (s: number) => voi
   return (
     <div className="relative" ref={ref}>
       <button type="button" className="btn-pop text-sm" onClick={() => setOpen(!open)}>
-        ⏱ Timer
+        <Icon name="timer" size={16} /> Timer
       </button>
       {open && (
         <div className="card-pop absolute top-full right-0 z-30 mt-1 flex gap-1 p-1.5">
@@ -444,13 +445,13 @@ function NotesDock({ notes, scratch, onScratch }: { notes: string; scratch: stri
   return (
     <footer className="grid h-44 shrink-0 grid-cols-2 border-t border-line bg-card">
       <div className="flex flex-col overflow-hidden border-r border-line p-3">
-        <div className="mb-1 text-xs font-extrabold tracking-wide text-ink-soft uppercase">📋 Your notes for this question</div>
+        <div className="mb-1 text-xs font-semibold tracking-wide text-ink-soft uppercase">Your notes for this question</div>
         <div className="flex-1 overflow-y-auto text-base leading-relaxed whitespace-pre-wrap">
           {notes || <span className="text-ink-faint">no presenter notes on this one — add them in the editor</span>}
         </div>
       </div>
       <div className="flex flex-col overflow-hidden p-3">
-        <div className="mb-1 text-xs font-extrabold tracking-wide text-ink-soft uppercase">✍️ Scratchpad (saves as you type, lands in the export)</div>
+        <div className="mb-1 text-xs font-semibold tracking-wide text-ink-soft uppercase">Scratchpad (saves as you type, lands in the export)</div>
         <textarea
           className="w-full flex-1 resize-none bg-transparent text-base leading-relaxed outline-none placeholder:text-ink-faint"
           placeholder="“CEO hates the mascot” — that kind of thing"

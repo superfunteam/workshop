@@ -11,8 +11,9 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@fontsource-variable/outfit": "^5.2.0",
+    "@fontsource-variable/public-sans": "^5.2.7",
     "@netlify/blobs": "^10.0.0",
+    "material-symbols": "^0.45.8",
     "motion": "^12.15.0",
     "qrcode": "^1.5.4",
     "react": "^19.1.0",

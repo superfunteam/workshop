@@ -41,7 +41,7 @@ export default function ChoiceInput({
               transition={POP}
               type="button"
               onClick={() => toggle(i)}
-              className={`card-pop cursor-pointer px-5 py-4 text-left font-display text-xl font-bold ${
+              className={`card-pop cursor-pointer px-5 py-4 text-left font-display text-xl font-semibold ${
                 picked ? 'text-white' : 'bg-white'
               }`}
               style={picked ? { background: dataColor(i) } : { borderLeft: `10px solid ${dataColor(i)}` }}

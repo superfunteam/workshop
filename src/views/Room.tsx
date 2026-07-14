@@ -20,6 +20,7 @@ import EmoteBar from '../components/EmoteBar.tsx';
 import EmoteLayer from '../components/EmoteLayer.tsx';
 import { TimerChip } from '../components/Timer.tsx';
 import { AvatarChip, SyncDot, TypeBadge } from '../components/bits.tsx';
+import Icon from '../components/Icon.tsx';
 
 export default function RoomView({ code }: { code: string }) {
   const [identity, setIdentity] = useState<Identity | null>(() => session.identity(code));
@@ -91,7 +92,7 @@ function JoinScreen({ code, onJoined }: { code: string; onJoined: (id: Identity)
           }}
         />
         <div>
-          <p className="mb-2 text-center text-sm font-bold text-ink-soft">Pick your creature</p>
+          <p className="mb-2 text-center text-sm font-semibold text-ink-soft">Pick your creature</p>
           <motion.div variants={staggerParent(0.015)} initial="hidden" animate="show" className="grid grid-cols-8 gap-1.5">
             {AVATARS.map((a) => (
               <motion.button
@@ -155,13 +156,13 @@ function LiveRoom({ code, identity }: { code: string; identity: Identity }) {
     <div className="mx-auto flex min-h-dvh max-w-3xl flex-col px-5 pt-5 pb-28">
       <header className="mb-6 flex items-center justify-between gap-3">
         <div className="min-w-0">
-          <div className="truncate font-display text-lg font-bold">{config.name}</div>
+          <div className="truncate font-display text-lg font-semibold">{config.name}</div>
           <SyncDot status={status} />
         </div>
         <div className="flex items-center gap-2">
           <TimerChip timer={state.timer} serverNow={serverNow} />
           <span className="chip" title="in the room">
-            ✋ {snapshot.participants.filter((p) => p.online).length}
+            <Icon name="groups" size={16} /> {snapshot.participants.filter((p) => p.online).length}
           </span>
           <span className="chip bg-sun/40">{identity.avatar} {identity.name}</span>
         </div>
@@ -277,7 +278,7 @@ function QuestionStage({ code, snapshot, identity }: { code: string; snapshot: S
           <span className="chip bg-note-lilac/60">{section.title}</span>
           <span className="chip">{n + 1} of {total}</span>
           <TypeBadge type={question.type} />
-          {question.anonymous && <span className="chip bg-note-pink/60">🕶 anonymous</span>}
+          {question.anonymous && <span className="chip bg-note-pink/60"><Icon name="visibility_off" size={14} /> anonymous</span>}
         </div>
 
         {question.type === 'slide' ? (
@@ -297,7 +298,7 @@ function QuestionStage({ code, snapshot, identity }: { code: string; snapshot: S
         {revealed && !talk && (
           <div className="flex flex-col gap-6">
             <ResultsView question={question} answers={questionAnswers?.answers ?? []} participants={snapshot.participants} />
-            <button type="button" className="self-center text-sm font-bold text-ink-soft underline" onClick={() => setEditing(true)}>
+            <button type="button" className="self-center text-sm font-semibold text-ink-soft underline" onClick={() => setEditing(true)}>
               change my answer
             </button>
             {editing && (
@@ -357,7 +358,7 @@ function QuestionStage({ code, snapshot, identity }: { code: string; snapshot: S
               className="btn-pop mt-2 text-sm"
               onClick={() => setEditing(true)}
             >
-              ✏️ Change my answer
+              <Icon name="edit" size={16} /> Change my answer
             </motion.button>
           </motion.div>
         )}

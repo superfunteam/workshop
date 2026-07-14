@@ -40,7 +40,7 @@ export default function SliderInput({
   return (
     <div className="flex w-full flex-col items-center gap-8">
       <div className="w-full">
-        <div className="mb-3 flex justify-between font-display text-xl font-bold sm:text-2xl">
+        <div className="mb-3 flex justify-between font-display text-xl font-semibold sm:text-2xl">
           <span className="max-w-[45%] text-left">← {question.left}</span>
           <span className="max-w-[45%] text-right">{question.right} →</span>
         </div>

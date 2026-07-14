@@ -15,6 +15,7 @@ import EmoteLayer from '../components/EmoteLayer.tsx';
 import { TimerBig } from '../components/Timer.tsx';
 import QR from '../components/QR.tsx';
 import { AvatarChip } from '../components/bits.tsx';
+import Icon from '../components/Icon.tsx';
 
 export default function StageView({ code }: { code: string }) {
   const { snapshot, status, emotes, serverNow } = useRoom(code, { stage: true });
@@ -43,9 +44,9 @@ export default function StageView({ code }: { code: string }) {
             <QR url={joinUrl} size={220} />
             <div className="text-left">
               <p className="font-semibold text-2xl text-ink-soft">join at</p>
-              <p className="font-display text-4xl font-extrabold">{location.host}</p>
+              <p className="font-display text-4xl font-semibold">{location.host}</p>
               <p className="mt-3 font-semibold text-2xl text-ink-soft">room code</p>
-              <p className="font-display text-7xl font-extrabold tracking-[0.2em]">{code}</p>
+              <p className="font-display text-7xl font-semibold tracking-[0.2em]">{code}</p>
             </div>
           </div>
           <div className="flex max-w-3xl flex-wrap justify-center gap-2">
@@ -82,7 +83,7 @@ export default function StageView({ code }: { code: string }) {
       {/* footer strip */}
       <footer className="mt-auto flex items-end justify-between pt-6">
         <div className="flex items-center gap-3">
-          <span className="chip bg-white text-base">✋ {online.length} in the room</span>
+          <span className="chip bg-white text-base"><Icon name="groups" size={16} /> {online.length} in the room</span>
           <span className={`chip text-base ${status === 'live' || status === 'polling' ? 'bg-note-mint/70' : 'bg-note-pink'}`}>
             {status === 'live' || status === 'polling' ? '● synced' : '○ reconnecting…'}
           </span>
@@ -91,8 +92,8 @@ export default function StageView({ code }: { code: string }) {
           <div className="flex items-center gap-3 rounded-2xl border border-line bg-white p-2.5 shadow-pop-sm">
             <QR url={joinUrl} size={84} />
             <div className="pr-2 text-left">
-              <div className="text-[11px] font-extrabold tracking-wide text-ink-soft uppercase">late? join in</div>
-              <div className="font-display text-2xl font-extrabold tracking-[0.15em]">{code}</div>
+              <div className="text-[11px] font-semibold tracking-wide text-ink-soft uppercase">late? join in</div>
+              <div className="font-display text-2xl font-semibold tracking-[0.15em]">{code}</div>
             </div>
           </div>
         )}
@@ -159,7 +160,7 @@ function LiveStage({ snapshot }: { snapshot: Snapshot }) {
         <span className="chip text-base">
           {flat.n + 1} / {flat.total}
         </span>
-        {flat.question.anonymous && <span className="chip bg-note-pink/60 text-base">🕶 anonymous</span>}
+        {flat.question.anonymous && <span className="chip bg-note-pink/60 text-base"><Icon name="visibility_off" size={16} /> anonymous</span>}
       </div>
       <h1 className="display-type mb-3 text-6xl xl:text-7xl">{flat.question.prompt}</h1>
       {flat.question.hint && <p className="mb-6 font-semibold text-2xl text-ink-soft">{flat.question.hint}</p>}
@@ -171,7 +172,7 @@ function LiveStage({ snapshot }: { snapshot: Snapshot }) {
       ) : (
         <div className="flex flex-1 flex-col items-center justify-center gap-8">
           <div className="w-full max-w-3xl">
-            <div className="mb-3 flex justify-between font-display text-3xl font-extrabold">
+            <div className="mb-3 flex justify-between font-display text-3xl font-semibold">
               <span>{onlineAnswered(snapshot.participants, answeredPids)} in</span>
               <span className="text-ink-soft">{online.length} in the room</span>
             </div>

@@ -42,7 +42,7 @@ export default function WordcloudResults({ answers, big }: ResultsProps<Wordclou
             title={`${c.count}×`}
           >
             {c.word}
-            {c.count > 1 && <sup className="ml-0.5 font-sans text-[0.45em] font-bold text-ink-soft">×{c.count}</sup>}
+            {c.count > 1 && <sup className="ml-0.5 font-sans text-[0.45em] font-semibold text-ink-soft">×{c.count}</sup>}
           </motion.span>
         );
       })}

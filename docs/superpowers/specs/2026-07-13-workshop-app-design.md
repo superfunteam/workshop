@@ -99,8 +99,10 @@ Everything is archived by construction — the recap page and exports read the s
 
 Light, warm, clean — light backgrounds project far better than dark in a bright meeting room. Cream canvas, ink text, saturated accent set (coral, tangerine, sunny yellow, mint, sky, lilac), rounded cards on **soft diffused shadows with hairline borders** (the v1 neo-brutalist ink outlines + hard offset shadows were softened same-day at Clark's request — "fun lives in the color and motion, not the ink"). Sticky notes keep their tilt. Motion everywhere but fast.
 
-**Type (Google fonts, self-hosted via Fontsource so venue WiFi can't hurt us):**
-- One family: **Outfit** — weights do the work (700 display, 600 UI). Bricolage Grotesque and the Caveat handwriting accent shipped in v1 and were both removed at Clark's request for a cleaner, more corporate read.
+**Type (Google fonts, self-hosted so venue WiFi can't hurt us):**
+- One family: **Public Sans**, with a hard weight ceiling of **semibold (600)** — no bold or black anywhere. (Type history: Bricolage Grotesque + Caveat → Outfit → Public Sans, each step at Clark's request toward calmer and more corporate.)
+- **Material Symbols Rounded** (self-hosted) for every interface action icon — play/timer/reveal/download/edit/etc. Emoji is reserved for content: avatars, reactions, slide heroes.
+- Every question type owns a **Material icon + hue** (`TYPE_META`) used consistently in badges, the editor's type picker, per-question cards (colored left edge + icon swatch + colored type label), and a tinted "Editing a {type} question" banner inside the expanded editor panel — you always know what kind of question you're touching.
 
 **Animated emoji:** hero moments (slides, discussion, waiting/break/wrap screens, reaction floaters) use **Google's animated Noto emoji** served from fonts.gstatic.com, with automatic fallback to the static glyph if an emoji isn't in the animated set or the network blocks it.
 

@@ -48,7 +48,7 @@ export default function EmoteLayer({ emotes }: { emotes: EmoteEvent[] }) {
           style={{ left: f.lane, ['--drift' as string]: `${f.drift}px` }}
         >
           <AnimatedEmoji emoji={f.emoji} size={44} className="drop-shadow-sm" />
-          <span className="rounded-full border border-line bg-white px-2 py-0.5 text-[11px] font-bold shadow-pop-sm whitespace-nowrap">
+          <span className="rounded-full border border-line bg-white px-2 py-0.5 text-[11px] font-semibold shadow-pop-sm whitespace-nowrap">
             {f.avatar} {f.name}
           </span>
         </div>

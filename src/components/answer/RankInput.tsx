@@ -45,7 +45,7 @@ export default function RankInput({
               aria-pressed={ranked}
             >
               <span
-                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-line font-display text-xl font-extrabold ${
+                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-line font-display text-xl font-semibold ${
                   ranked ? 'bg-ink text-white' : 'bg-white text-ink-faint'
                 }`}
               >
@@ -62,7 +62,7 @@ export default function RankInput({
                   </motion.span>
                 </AnimatePresence>
               </span>
-              <span className="font-display text-lg font-bold">{option}</span>
+              <span className="font-display text-lg font-semibold">{option}</span>
               {ranked && (
                 <motion.span initial={{ opacity: 0, x: 8 }} animate={{ opacity: 1, x: 0 }} className="ml-auto text-sm font-semibold text-ink-soft">
                   tap to remove

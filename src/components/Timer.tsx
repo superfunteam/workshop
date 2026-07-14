@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { RoomTimer } from '../../shared/types.ts';
+import Icon from './Icon.tsx';
 
 function useRemaining(timer: RoomTimer | null, serverNow: () => number): number | null {
   const [, forceTick] = useState(0);
@@ -24,7 +25,7 @@ export function TimerChip({ timer, serverNow }: { timer: RoomTimer | null; serve
         remaining === 0 ? 'bg-coral text-white' : urgent ? 'bg-coral/20 animate-pulse' : 'bg-sun/40'
       }`}
     >
-      ⏱ {remaining === 0 ? "Time!" : fmt(remaining)}
+      <Icon name="timer" size={16} /> {remaining === 0 ? 'Time!' : fmt(remaining)}
     </span>
   );
 }

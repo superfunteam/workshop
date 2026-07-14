@@ -6,7 +6,8 @@ import type { Question, QuestionType, Section, Snapshot } from '../../shared/typ
 import { rid } from '../../shared/codes.ts';
 import { api } from '../lib/api.ts';
 import { session } from '../lib/session.ts';
-import { TYPE_META } from '../components/bits.tsx';
+import { TYPE_META, TypeSwatch } from '../components/bits.tsx';
+import Icon from '../components/Icon.tsx';
 
 interface Draft {
   name: string;
@@ -111,17 +112,17 @@ export default function Editor({ code }: { code: string }) {
     <div className="mx-auto max-w-3xl px-5 py-8">
       <header className="mb-8">
         <div className="mb-4 flex flex-wrap items-center gap-2">
-          <Link to="/" className="btn-pop px-3 py-1 text-sm">← Home</Link>
+          <Link to="/" className="btn-pop px-3 py-1 text-sm"><Icon name="arrow_back" size={15} /> Home</Link>
           <span className="chip bg-sun/50 font-mono tracking-widest">{code}</span>
-          <span className={`text-sm font-bold ${saveState === 'error' ? 'text-coral' : 'text-ink-soft'}`}>
+          <span className={`text-sm font-semibold ${saveState === 'error' ? 'text-coral' : 'text-ink-soft'}`}>
             {saveState === 'saved' && 'saved ✓'}
             {saveState === 'saving' && 'saving…'}
             {saveState === 'dirty' && '…'}
             {saveState === 'error' && 'couldn’t save — check connection'}
           </span>
           <div className="ml-auto flex flex-wrap gap-1.5">
-            <CopyButton label="🔗 Join link" value={joinUrl} />
-            <CopyButton label="🗝️ Host link" value={hostUrl} />
+            <CopyButton icon="link" label="Join link" value={joinUrl} />
+            <CopyButton icon="key" label="Host link" value={hostUrl} />
             <Link to={`/host/${code}`} className="btn-pop bg-sun px-3 py-1 text-sm">Open host view →</Link>
           </div>
         </div>
@@ -131,7 +132,7 @@ export default function Editor({ code }: { code: string }) {
           maxLength={120}
           onChange={(e) => update((d) => ({ ...d, name: e.target.value }))}
         />
-        <label className="mt-3 inline-flex cursor-pointer items-center gap-2 text-sm font-bold text-ink-soft">
+        <label className="mt-3 inline-flex cursor-pointer items-center gap-2 text-sm font-semibold text-ink-soft">
           <input
             type="checkbox"
             checked={draft.autoReveal}
@@ -216,7 +217,7 @@ export default function Editor({ code }: { code: string }) {
         className="btn-pop mt-6 w-full border-dashed py-3"
         onClick={() => update((d) => ({ ...d, sections: [...d.sections, { id: rid(8), title: `Section ${d.sections.length + 1}`, questions: [] }] }))}
       >
-        + Add a section
+        <Icon name="add" size={18} /> Add a section
       </button>
 
       <footer className="mt-12 flex items-center justify-between border-t border-dashed border-ink-faint pt-6">
@@ -231,7 +232,7 @@ export default function Editor({ code }: { code: string }) {
             });
           }}
         >
-          🧬 Duplicate room
+          <Icon name="library_add" size={16} /> Duplicate room
         </button>
         <button
           type="button"
@@ -245,7 +246,7 @@ export default function Editor({ code }: { code: string }) {
             }
           }}
         >
-          🗑 Delete room
+          <Icon name="delete" size={16} /> Delete room
         </button>
       </footer>
     </div>
@@ -256,7 +257,7 @@ function Centered({ children }: { children: React.ReactNode }) {
   return <div className="flex min-h-dvh flex-col items-center justify-center gap-4 px-6 text-center">{children}</div>;
 }
 
-function CopyButton({ label, value }: { label: string; value: string }) {
+function CopyButton({ icon, label, value }: { icon: string; label: string; value: string }) {
   const [copied, setCopied] = useState(false);
   return (
     <button
@@ -269,7 +270,7 @@ function CopyButton({ label, value }: { label: string; value: string }) {
         });
       }}
     >
-      {copied ? 'Copied ✓' : label}
+      <Icon name={copied ? 'check' : icon} size={15} /> {copied ? 'Copied' : label}
     </button>
   );
 }
@@ -277,12 +278,12 @@ function CopyButton({ label, value }: { label: string; value: string }) {
 function RowButtons({ onUp, onDown, onDelete, onDuplicate }: { onUp?: () => void; onDown?: () => void; onDelete: () => void; onDuplicate?: () => void }) {
   return (
     <div className="flex shrink-0 gap-1">
-      <button type="button" className="btn-pop h-8 w-8 p-0 text-xs" disabled={!onUp} onClick={onUp} aria-label="move up">↑</button>
-      <button type="button" className="btn-pop h-8 w-8 p-0 text-xs" disabled={!onDown} onClick={onDown} aria-label="move down">↓</button>
+      <button type="button" className="btn-pop h-8 w-8 p-0" disabled={!onUp} onClick={onUp} aria-label="move up"><Icon name="arrow_upward" size={15} /></button>
+      <button type="button" className="btn-pop h-8 w-8 p-0" disabled={!onDown} onClick={onDown} aria-label="move down"><Icon name="arrow_downward" size={15} /></button>
       {onDuplicate && (
-        <button type="button" className="btn-pop h-8 w-8 p-0 text-xs" onClick={onDuplicate} aria-label="duplicate">⧉</button>
+        <button type="button" className="btn-pop h-8 w-8 p-0" onClick={onDuplicate} aria-label="duplicate"><Icon name="content_copy" size={15} /></button>
       )}
-      <button type="button" className="btn-pop h-8 w-8 p-0 text-xs hover:bg-coral hover:text-white" onClick={onDelete} aria-label="delete">✕</button>
+      <button type="button" className="btn-pop h-8 w-8 p-0 hover:bg-coral hover:text-white" onClick={onDelete} aria-label="delete"><Icon name="close" size={15} /></button>
     </div>
   );
 }
@@ -319,7 +320,7 @@ function AddQuestion({ onAdd }: { onAdd: (t: QuestionType) => void }) {
     <div className="mt-4">
       {!open ? (
         <button type="button" className="btn-pop border-dashed text-sm" onClick={() => setOpen(true)}>
-          + Add a question
+          <Icon name="add" size={16} /> Add a question
         </button>
       ) : (
         <div className="card-pop grid grid-cols-2 gap-2 bg-paper p-3 sm:grid-cols-4">
@@ -333,12 +334,12 @@ function AddQuestion({ onAdd }: { onAdd: (t: QuestionType) => void }) {
                 setOpen(false);
               }}
             >
-              <div className="text-xl">{TYPE_META[type].emoji}</div>
-              <div className="font-display text-sm font-bold">{TYPE_META[type].label}</div>
-              <div className="text-[11px] font-semibold text-ink-soft">{TYPE_META[type].blurb}</div>
+              <TypeSwatch type={type} size={30} />
+              <div className="mt-1.5 font-display text-sm font-semibold">{TYPE_META[type].label}</div>
+              <div className="text-[11px] font-medium text-ink-soft">{TYPE_META[type].blurb}</div>
             </button>
           ))}
-          <button type="button" className="col-span-2 text-xs font-bold text-ink-soft underline sm:col-span-4" onClick={() => setOpen(false)}>
+          <button type="button" className="col-span-2 text-xs font-semibold text-ink-soft underline sm:col-span-4" onClick={() => setOpen(false)}>
             never mind
           </button>
         </div>
@@ -368,14 +369,26 @@ function QuestionCard({
   const meta = TYPE_META[question.type];
 
   return (
-    <div className="rounded-2xl border border-line bg-white">
-      <div className="flex items-center gap-2 p-3">
-        <span title={meta.label}>{meta.emoji}</span>
-        <button type="button" className="min-w-0 flex-1 cursor-pointer truncate text-left font-semibold" onClick={() => setOpen(!open)}>
-          {question.prompt || <span className="text-ink-faint italic">untitled — click to write the prompt</span>}
+    <div
+      className="overflow-hidden rounded-2xl border bg-white transition-shadow"
+      style={{
+        borderColor: open ? `${meta.hue}66` : 'var(--color-line)',
+        borderLeft: `4px solid ${meta.hue}`,
+        boxShadow: open ? `0 8px 24px -10px ${meta.hue}55` : undefined,
+      }}
+    >
+      <div className="flex items-center gap-2.5 p-3">
+        <TypeSwatch type={question.type} size={34} />
+        <button type="button" className="min-w-0 flex-1 cursor-pointer text-left" onClick={() => setOpen(!open)}>
+          <span className="block truncate font-semibold">
+            {question.prompt || <span className="text-ink-faint italic">untitled — click to write the prompt</span>}
+          </span>
+          <span className="block text-[11px] font-semibold tracking-wide uppercase" style={{ color: meta.hue }}>
+            {meta.label}
+          </span>
         </button>
-        {question.anonymous && <span title="anonymous">🕶</span>}
-        {question.notes && <span title="has presenter notes">📋</span>}
+        {question.anonymous && <Icon name="visibility_off" size={16} className="text-ink-faint" />}
+        {question.notes && <Icon name="description" size={16} className="text-ink-faint" />}
         <button type="button" className="btn-pop h-8 px-2.5 py-0 text-xs" onClick={() => setOpen(!open)}>
           {open ? 'done' : 'edit'}
         </button>
@@ -383,7 +396,19 @@ function QuestionCard({
       </div>
 
       {open && (
-        <div className="flex flex-col gap-3 border-t-2 border-dashed border-line px-3 pt-3 pb-4">
+        <div className="flex flex-col gap-3 px-3 pt-0 pb-4">
+          <div
+            className="flex items-center gap-3 rounded-xl px-3.5 py-2.5"
+            style={{ background: meta.tint }}
+          >
+            <Icon name={meta.icon} size={22} style={{ color: meta.hue }} />
+            <div className="min-w-0">
+              <div className="text-sm font-semibold" style={{ color: meta.hue }}>
+                Editing a {meta.label} question
+              </div>
+              <div className="text-xs font-medium text-ink-soft">{meta.blurb}</div>
+            </div>
+          </div>
           <Field label="Question">
             <input className="input-pop w-full text-lg" value={question.prompt} maxLength={300} placeholder="Ask the room something…" autoFocus={!question.prompt}
               onChange={(e) => onChange({ ...question, prompt: e.target.value })} />
@@ -399,10 +424,10 @@ function QuestionCard({
             <textarea className="input-pop min-h-16 w-full text-base" value={question.notes ?? ''} maxLength={2000}
               onChange={(e) => onChange({ ...question, notes: e.target.value || undefined })} />
           </Field>
-          <label className="inline-flex cursor-pointer items-center gap-2 text-sm font-bold text-ink-soft">
+          <label className="inline-flex cursor-pointer items-center gap-2 text-sm font-semibold text-ink-soft">
             <input type="checkbox" checked={!!question.anonymous}
               onChange={(e) => onChange({ ...question, anonymous: e.target.checked || undefined })} />
-            🕶 Anonymous — hide names on the reveal
+            <Icon name="visibility_off" size={15} /> Anonymous — hide names on the reveal
           </label>
         </div>
       )}
@@ -413,7 +438,7 @@ function QuestionCard({
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="flex flex-col gap-1">
-      <span className="text-xs font-extrabold tracking-wide text-ink-soft uppercase">{label}</span>
+      <span className="text-xs font-semibold tracking-wide text-ink-soft uppercase">{label}</span>
       {children}
     </label>
   );
@@ -442,7 +467,7 @@ function TypeFields({ question, onChange }: { question: Question; onChange: (q: 
       return (
         <>
           <LinesEditor label="Options" values={question.options} onChange={(options) => onChange({ ...question, options })} />
-          <label className="inline-flex cursor-pointer items-center gap-2 text-sm font-bold text-ink-soft">
+          <label className="inline-flex cursor-pointer items-center gap-2 text-sm font-semibold text-ink-soft">
             <input type="checkbox" checked={!!question.multi} onChange={(e) => onChange({ ...question, multi: e.target.checked || undefined })} />
             Allow picking more than one
           </label>
