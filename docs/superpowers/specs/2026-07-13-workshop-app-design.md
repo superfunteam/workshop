@@ -97,7 +97,7 @@ Everything is archived by construction — the recap page and exports read the s
 
 ## 6. Look & feel
 
-Light, warm, clean — light backgrounds project far better than dark in a bright meeting room. Cream canvas, ink text, saturated accent set (coral, tangerine, sunny yellow, mint, sky, lilac), rounded cards on **soft diffused shadows with hairline borders** (the v1 neo-brutalist ink outlines + hard offset shadows were softened same-day at Clark's request — "fun lives in the color and motion, not the ink"). Sticky notes keep their tilt. Motion everywhere but fast.
+**Black-and-white chrome, colorful content.** Neutral near-white canvas, white cards, near-black ink, hairline neutral borders, soft diffused shadows; primary actions are black pills with white text; the active rail item is an inverted black card. All color lives in the CONTENT: the validated data palette, sticky-note stock, per-type hues, animated emoji, and confetti. (Style history: warm cream + sunny yellow chrome shipped first; Clark asked to drop the yellow/pale-yellow scheme for black-and-white.) Sticky notes keep their tilt. Motion everywhere but fast.
 
 **Type (Google fonts, self-hosted so venue WiFi can't hurt us):**
 - One family: **Google Sans** (variable, from Google Fonts, self-hosted), with a hard weight ceiling of **semibold (600)** — no bold or black anywhere. (Type history: Bricolage Grotesque + Caveat → Outfit → Public Sans → Google Sans, each step at Clark's request.)

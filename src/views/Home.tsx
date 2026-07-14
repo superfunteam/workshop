@@ -55,7 +55,7 @@ export default function Home() {
               if (e.key === 'Enter') void create();
             }}
           />
-          <button type="button" className="btn-pop bg-sun self-start px-6 py-2.5 text-lg" disabled={creating} onClick={() => void create()}>
+          <button type="button" className="btn-pop bg-ink text-white hover:bg-ink/90 self-start px-6 py-2.5 text-lg" disabled={creating} onClick={() => void create()}>
             {creating ? 'Setting up…' : 'Create it →'}
           </button>
           <p className="text-sm font-semibold text-ink-soft">
@@ -64,7 +64,7 @@ export default function Home() {
           {error && <p className="font-semibold text-base text-coral">{error}</p>}
         </section>
 
-        <section className="card-pop flex flex-col gap-4 bg-note-sky/30 p-6">
+        <section className="card-pop flex flex-col gap-4 bg-paper p-6">
           <h2 className="display-type text-2xl">Joining one?</h2>
           <input
             className="input-pop text-center font-display text-3xl font-semibold tracking-[0.35em] uppercase"

@@ -109,7 +109,7 @@ function JoinScreen({ code, onJoined }: { code: string; onJoined: (id: Identity)
                 onPointerLeave={() => setHotAvatar((h) => (h === a ? null : h))}
                 onPointerDown={() => setHotAvatar(a)}
                 className={`flex items-center justify-center rounded-xl border-2 p-1.5 ${
-                  avatar === a ? 'border-sun bg-sun/60 shadow-pop-sm' : 'border-transparent'
+                  avatar === a ? 'border-ink bg-ink/5 shadow-pop-sm' : 'border-transparent'
                 }`}
                 aria-pressed={avatar === a}
                 aria-label={`avatar ${a}`}
@@ -119,7 +119,7 @@ function JoinScreen({ code, onJoined }: { code: string; onJoined: (id: Identity)
             ))}
           </motion.div>
         </div>
-        <button type="button" className="btn-pop bg-sun py-3 text-xl" disabled={busy || !name.trim()} onClick={() => void join()}>
+        <button type="button" className="btn-pop bg-ink text-white hover:bg-ink/90 py-3 text-xl" disabled={busy || !name.trim()} onClick={() => void join()}>
           {busy ? 'Joining…' : `Join as ${avatar} ${name.trim() || '…'}`}
         </button>
         {error && <p className="text-center font-semibold text-base text-coral">{error}</p>}
@@ -168,7 +168,7 @@ function LiveRoom({ code, identity }: { code: string; identity: Identity }) {
           <span className="chip" title="in the room">
             <Icon name="groups" size={16} /> {snapshot.participants.filter((p) => p.online).length}
           </span>
-          <span className="chip bg-sun/40">{identity.avatar} {identity.name}</span>
+          <span className="chip">{identity.avatar} {identity.name}</span>
         </div>
       </header>
 
@@ -219,7 +219,7 @@ function PhaseBody({ code, snapshot, identity }: { code: string; snapshot: Snaps
         <AnimatedEmoji emoji="🎬" size={96} />
         <h1 className="display-type text-5xl">That’s a wrap!</h1>
         <p className="font-semibold text-xl text-ink-soft">thanks for making it a good one, {identity.name}</p>
-        <Link to={`/recap/${code}`} className="btn-pop bg-sun mt-4 text-lg">
+        <Link to={`/recap/${code}`} className="btn-pop bg-ink text-white hover:bg-ink/90 mt-4 text-lg">
           See everything we made →
         </Link>
       </Centered>
@@ -306,7 +306,7 @@ function QuestionStage({ code, snapshot, identity }: { code: string; snapshot: S
               change my answer
             </button>
             {editing && (
-              <div className="card-pop bg-note-yellow/30 p-5">
+              <div className="card-pop bg-paper p-5">
                 <AnswerInput question={question} value={myValue} onSubmit={submit} code={code} pid={identity.pid} />
               </div>
             )}

@@ -32,7 +32,7 @@ export default function DotvoteInput({
 
   return (
     <div className="flex w-full flex-col items-center gap-6">
-      <motion.div layout transition={POP} className="chip bg-sun/50 text-base">
+      <motion.div layout transition={POP} className="chip bg-ink/5 text-base">
         {left === 0 ? 'All dots placed!' : `${left} dot${left === 1 ? '' : 's'} left`}{' '}
         <span className="tracking-widest" aria-hidden>
           <AnimatePresence mode="popLayout">
@@ -81,7 +81,7 @@ export default function DotvoteInput({
               <motion.button whileTap={{ scale: 0.82 }} transition={POP} type="button" className="btn-pop h-10 w-10 p-0 text-xl" disabled={dots[i] === 0} onClick={() => bump(i, -1)} aria-label={`remove dot from ${option}`}>
                 −
               </motion.button>
-              <motion.button whileTap={{ scale: 0.82 }} transition={POP} type="button" className="btn-pop bg-sun h-10 w-10 p-0 text-xl" disabled={left === 0} onClick={() => bump(i, 1)} aria-label={`add dot to ${option}`}>
+              <motion.button whileTap={{ scale: 0.82 }} transition={POP} type="button" className="btn-pop bg-ink text-white hover:bg-ink/90 h-10 w-10 p-0 text-xl" disabled={left === 0} onClick={() => bump(i, 1)} aria-label={`add dot to ${option}`}>
                 +
               </motion.button>
             </div>

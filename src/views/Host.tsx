@@ -52,7 +52,7 @@ function NeedKey({ code, onKey }: { code: string; onKey: (k: string) => void }) 
         <input className="input-pop" placeholder="host key" value={value} onChange={(e) => setValue(e.target.value)} />
         <button
           type="button"
-          className="btn-pop bg-sun"
+          className="btn-pop bg-ink text-white hover:bg-ink/90"
           disabled={!value.trim()}
           onClick={() => {
             session.saveHostKey(code, value.trim());
@@ -133,13 +133,13 @@ function Console({ code, hostKey }: { code: string; hostKey: string }) {
       {/* top bar */}
       <header className="flex flex-wrap items-center gap-2 border-b border-line bg-card px-4 py-2.5">
         <span className="font-display text-lg font-semibold">{config.name}</span>
-        <span className="chip bg-sun/50 font-mono tracking-widest">{code}</span>
+        <span className="chip bg-ink/5 font-mono tracking-widest">{code}</span>
         <SyncDot status={status} />
         <span className="chip"><Icon name="groups" size={16} /> {online.length} in the room</span>
         <TimerChip timer={state.timer} serverNow={serverNow} />
         <div className="ml-auto flex flex-wrap items-center gap-1.5">
           {state.phase === 'lobby' && (
-            <button type="button" className="btn-pop animate-pulse-ring bg-sun" disabled={busy} onClick={() => void act({ action: 'start' })}>
+            <button type="button" className="btn-pop bg-ink text-white hover:bg-ink/90 animate-pulse-ring" disabled={busy} onClick={() => void act({ action: 'start' })}>
               <Icon name="play_arrow" size={16} /> Start the show
             </button>
           )}
@@ -162,7 +162,7 @@ function Console({ code, hostKey }: { code: string; hostKey: string }) {
             </>
           )}
           {(state.phase === 'break' || state.phase === 'ended') && (
-            <button type="button" className="btn-pop bg-sun text-sm" disabled={busy} onClick={() => void act({ action: 'phase', phase: 'live' })}>
+            <button type="button" className="btn-pop bg-ink text-white hover:bg-ink/90 text-sm" disabled={busy} onClick={() => void act({ action: 'phase', phase: 'live' })}>
               ▶ Back to it
             </button>
           )}
@@ -213,11 +213,11 @@ function Console({ code, hostKey }: { code: string; hostKey: string }) {
                         <motion.span
                           layoutId="rail-pill"
                           transition={SLIDE}
-                          className="absolute -inset-px rounded-xl border border-sun bg-sun shadow-pop-sm"
+                          className="absolute -inset-px rounded-xl bg-ink shadow-pop-sm"
                         />
                       )}
-                      <span className={`relative line-clamp-2 ${isCurrent ? '' : 'opacity-90'}`}>{q.prompt}</span>
-                      <span className="relative mt-0.5 flex items-center gap-1.5 text-[11px] font-medium text-ink-soft">
+                      <span className={`relative line-clamp-2 ${isCurrent ? 'text-white' : 'opacity-90'}`}>{q.prompt}</span>
+                      <span className={`relative mt-0.5 flex items-center gap-1.5 text-[11px] font-medium ${isCurrent ? 'text-white/70' : 'text-ink-soft'}`}>
                         {(() => {
                           const label = TYPE_META[q.type].label;
                           if (isTalkType(q.type)) return label;
@@ -286,7 +286,7 @@ function Console({ code, hostKey }: { code: string; hostKey: string }) {
                             <Icon name="visibility_off" size={16} /> Hide again
                           </motion.button>
                         ))}
-                      <motion.button whileTap={{ scale: 0.95 }} type="button" className="btn-pop bg-sun px-3 py-1 text-sm" disabled={busy} onClick={() => void act({ action: 'next' })}>
+                      <motion.button whileTap={{ scale: 0.95 }} type="button" className="btn-pop bg-ink text-white hover:bg-ink/90 px-3 py-1 text-sm" disabled={busy} onClick={() => void act({ action: 'next' })}>
                         Next →
                       </motion.button>
                     </div>
@@ -315,12 +315,12 @@ function Console({ code, hostKey }: { code: string; hostKey: string }) {
 
                 {/* talk moments render themselves; everything else gets the live peek */}
                 {flat.question.type === 'slide' && (
-                  <div className="card-pop mb-4 bg-note-sky/20 p-4">
+                  <div className="card-pop mb-4 bg-paper p-4">
                     <SlideMoment question={flat.question} />
                   </div>
                 )}
                 {flat.question.type === 'discuss' && (
-                  <div className="card-pop mb-4 bg-note-sky/20 p-4">
+                  <div className="card-pop mb-4 bg-paper p-4">
                     <DiscussMoment question={flat.question} role="host" />
                   </div>
                 )}
@@ -337,7 +337,7 @@ function Console({ code, hostKey }: { code: string; hostKey: string }) {
             </AnimatePresence>
           )}
           {state.phase === 'break' && (
-            <div className="card-pop bg-note-sky/40 p-6 text-center font-semibold text-xl">
+            <div className="card-pop bg-paper p-6 text-center font-semibold text-xl">
               Room’s on break ☕ — hit “Back to it” when you’re ready
             </div>
           )}
@@ -366,7 +366,7 @@ function Console({ code, hostKey }: { code: string; hostKey: string }) {
 function LobbyPanel({ code, online }: { code: string; online: number }) {
   const joinUrl = `${location.origin}/${code}`;
   return (
-    <div className="card-pop flex flex-col items-center gap-4 bg-note-yellow/30 p-8 text-center">
+    <div className="card-pop flex flex-col items-center gap-4 p-8 text-center">
       <h1 className="display-type text-3xl">Doors are open 🚪</h1>
       <p className="font-semibold text-ink-soft">
         Send people to <span className="font-mono font-semibold text-ink">{joinUrl}</span> — or throw the stage view on the projector; it has a QR code.

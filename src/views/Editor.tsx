@@ -113,7 +113,7 @@ export default function Editor({ code }: { code: string }) {
       <header className="mb-8">
         <div className="mb-4 flex flex-wrap items-center gap-2">
           <Link to="/" className="btn-pop px-3 py-1 text-sm"><Icon name="arrow_back" size={15} /> Home</Link>
-          <span className="chip bg-sun/50 font-mono tracking-widest">{code}</span>
+          <span className="chip bg-ink/5 font-mono tracking-widest">{code}</span>
           <span className={`text-sm font-semibold ${saveState === 'error' ? 'text-coral' : 'text-ink-soft'}`}>
             {saveState === 'saved' && 'saved ✓'}
             {saveState === 'saving' && 'saving…'}
@@ -123,7 +123,7 @@ export default function Editor({ code }: { code: string }) {
           <div className="ml-auto flex flex-wrap gap-1.5">
             <CopyButton icon="link" label="Join link" value={joinUrl} />
             <CopyButton icon="key" label="Host link" value={hostUrl} />
-            <Link to={`/host/${code}`} className="btn-pop bg-sun px-3 py-1 text-sm">Open host view →</Link>
+            <Link to={`/host/${code}`} className="btn-pop bg-ink text-white hover:bg-ink/90 px-3 py-1 text-sm">Open host view →</Link>
           </div>
         </div>
         <input

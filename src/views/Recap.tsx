@@ -68,7 +68,7 @@ export default function RecapView({ code }: { code: string }) {
           {new Date(snap.config.createdAt).toLocaleDateString(undefined, { dateStyle: 'long' })} · room {code}
         </p>
         <div className="mt-5 flex flex-wrap justify-center gap-2">
-          <a className="btn-pop bg-sun" href={api.exportUrl(code, 'md')}><Icon name="download" size={16} /> Markdown</a>
+          <a className="btn-pop bg-ink text-white hover:bg-ink/90" href={api.exportUrl(code, 'md')}><Icon name="download" size={16} /> Markdown</a>
           <a className="btn-pop" href={api.exportUrl(code, 'csv')}><Icon name="download" size={16} /> CSV</a>
           {hostKey && (
             <button type="button" className="btn-pop" onClick={() => void duplicate()}>
@@ -127,7 +127,7 @@ export default function RecapView({ code }: { code: string }) {
       ))}
 
       {snap.scratch && (
-        <section className="card-pop mb-10 bg-note-yellow/40 p-6">
+        <section className="card-pop mb-10 bg-paper p-6">
           <h2 className="display-type mb-3 text-2xl">Host scratchpad</h2>
           <p className="text-base leading-relaxed whitespace-pre-wrap">{snap.scratch}</p>
         </section>

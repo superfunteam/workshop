@@ -39,7 +39,7 @@ export function SubmitButton({
       whileHover={disabled ? undefined : { scale: 1.04 }}
       transition={POP}
       type="button"
-      className="btn-pop bg-sun px-8 py-3 text-xl"
+      className="btn-pop bg-ink text-white hover:bg-ink/90 px-8 py-3 text-xl"
       disabled={busy || disabled}
       onClick={onClick}
     >

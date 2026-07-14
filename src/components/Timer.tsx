@@ -22,7 +22,7 @@ export function TimerChip({ timer, serverNow }: { timer: RoomTimer | null; serve
   return (
     <span
       className={`chip font-display text-base tabular-nums ${
-        remaining === 0 ? 'bg-coral text-white' : urgent ? 'bg-coral/20 animate-pulse' : 'bg-sun/40'
+        remaining === 0 ? 'bg-coral text-white' : urgent ? 'bg-coral/20 animate-pulse' : 'bg-white'
       }`}
     >
       <Icon name="timer" size={16} /> {remaining === 0 ? 'Time!' : fmt(remaining)}
@@ -37,7 +37,7 @@ export function TimerBig({ timer, serverNow }: { timer: RoomTimer | null; server
   return (
     <div
       className={`card-pop animate-pop-in fixed top-6 right-6 z-40 px-6 py-3 text-center ${
-        remaining === 0 ? 'bg-coral text-white' : remaining <= 10 ? 'bg-note-pink' : 'bg-sun'
+        remaining === 0 ? 'bg-coral text-white' : remaining <= 10 ? 'bg-note-pink' : 'bg-ink text-white'
       }`}
     >
       <div className="display-type text-5xl tabular-nums">{remaining === 0 ? 'Time!' : fmt(remaining)}</div>

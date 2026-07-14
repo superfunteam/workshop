@@ -2,12 +2,12 @@
 
 @theme {
   /* The facilitator's wall: warm paper, marker ink, sticker accents. */
-  --color-paper: #fff9ee;
-  --color-card: #fffdf7;
-  --color-ink: #23211b;
-  --color-ink-soft: #6f6a5c;
-  --color-ink-faint: #a8a08d;
-  --color-line: #e9e0ca;
+  --color-paper: #f7f7f5;
+  --color-card: #ffffff;
+  --color-ink: #1b1b1a;
+  --color-ink-soft: #5f5e5a;
+  --color-ink-faint: #a5a4a0;
+  --color-line: #e6e5e2;
 
   /* Data palette — validated for CVD + contrast, assigned in this fixed order. */
   --color-data-1: #e4573d;
@@ -63,8 +63,8 @@ body {
 }
 
 ::selection {
-  background: var(--color-sun);
-  color: var(--color-ink);
+  background: var(--color-ink);
+  color: white;
 }
 
 /* ---------- signature pieces ---------- */
@@ -122,8 +122,8 @@ body {
 }
 
 .input-pop:focus {
-  border-color: var(--color-sun);
-  box-shadow: 0 0 0 3.5px rgb(255 210 63 / 0.35);
+  border-color: var(--color-ink);
+  box-shadow: 0 0 0 3.5px rgb(27 27 26 / 0.12);
 }
 
 .input-pop::placeholder {
@@ -269,7 +269,7 @@ body {
   width: 42px;
   height: 42px;
   border-radius: 999px;
-  background: var(--color-sun);
+  background: var(--color-ink);
   border: 3px solid white;
   box-shadow: 0 4px 12px -3px rgb(35 33 27 / 0.35);
   cursor: grab;
@@ -289,7 +289,7 @@ body {
   width: 42px;
   height: 42px;
   border-radius: 999px;
-  background: var(--color-sun);
+  background: var(--color-ink);
   border: 3px solid white;
   box-shadow: 0 4px 12px -3px rgb(35 33 27 / 0.35);
   cursor: grab;
