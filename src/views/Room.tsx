@@ -34,6 +34,7 @@ function JoinScreen({ code, onJoined }: { code: string; onJoined: (id: Identity)
   const [meta, setMeta] = useState<{ exists: boolean; name?: string } | null>(null);
   const [name, setName] = useState('');
   const [avatar, setAvatar] = useState<string>(() => AVATARS[Math.floor(Math.random() * AVATARS.length)]);
+  const [hotAvatar, setHotAvatar] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -104,13 +105,16 @@ function JoinScreen({ code, onJoined }: { code: string; onJoined: (id: Identity)
                 transition={BOUNCE}
                 type="button"
                 onClick={() => setAvatar(a)}
-                className={`rounded-xl border-2 p-1.5 text-2xl ${
+                onPointerEnter={() => setHotAvatar(a)}
+                onPointerLeave={() => setHotAvatar((h) => (h === a ? null : h))}
+                onPointerDown={() => setHotAvatar(a)}
+                className={`flex items-center justify-center rounded-xl border-2 p-1.5 ${
                   avatar === a ? 'border-sun bg-sun/60 shadow-pop-sm' : 'border-transparent'
                 }`}
                 aria-pressed={avatar === a}
                 aria-label={`avatar ${a}`}
               >
-                {a}
+                <AnimatedEmoji emoji={a} size={30} paused={hotAvatar !== a && avatar !== a} />
               </motion.button>
             ))}
           </motion.div>

@@ -100,11 +100,11 @@ Everything is archived by construction — the recap page and exports read the s
 Light, warm, clean — light backgrounds project far better than dark in a bright meeting room. Cream canvas, ink text, saturated accent set (coral, tangerine, sunny yellow, mint, sky, lilac), rounded cards on **soft diffused shadows with hairline borders** (the v1 neo-brutalist ink outlines + hard offset shadows were softened same-day at Clark's request — "fun lives in the color and motion, not the ink"). Sticky notes keep their tilt. Motion everywhere but fast.
 
 **Type (Google fonts, self-hosted so venue WiFi can't hurt us):**
-- One family: **Public Sans**, with a hard weight ceiling of **semibold (600)** — no bold or black anywhere. (Type history: Bricolage Grotesque + Caveat → Outfit → Public Sans, each step at Clark's request toward calmer and more corporate.)
+- One family: **Google Sans** (variable, from Google Fonts, self-hosted), with a hard weight ceiling of **semibold (600)** — no bold or black anywhere. (Type history: Bricolage Grotesque + Caveat → Outfit → Public Sans → Google Sans, each step at Clark's request.)
 - **Material Symbols Rounded** (self-hosted) for every interface action icon — play/timer/reveal/download/edit/etc. Emoji is reserved for content: avatars, reactions, slide heroes.
 - Every question type owns a **Material icon + hue** (`TYPE_META`) used consistently in badges, the editor's type picker, per-question cards (colored left edge + icon swatch + colored type label), and a tinted "Editing a {type} question" banner inside the expanded editor panel — you always know what kind of question you're touching.
 
-**Animated emoji:** hero moments (slides, discussion, waiting/break/wrap screens, reaction floaters) use **Google's animated Noto emoji** served from fonts.gstatic.com, with automatic fallback to the static glyph if an emoji isn't in the animated set or the network blocks it.
+**Animated emoji:** hero moments (slides, discussion, waiting/break/wrap screens, reaction floaters) use **Google's animated Noto emoji** served from fonts.gstatic.com. The avatar picker and the reaction bar render the static Noto art at rest and **animate on hover/press** (the selected avatar keeps animating); animated frames are preloaded so the swap is instant. Fallback chain: animated → static Noto SVG → system glyph, so an offline CDN can never break a workshop. The four avatar animals without animated versions were swapped for animated-capable ones (🐧🐻🐇🐅).
 
 ## 7. Stack
 

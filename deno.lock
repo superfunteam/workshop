@@ -11,8 +11,7 @@
   "workspace": {
     "packageJson": {
       "dependencies": [
-        "npm:@fontsource-variable/bricolage-grotesque@^5.2.0",
-        "npm:@fontsource-variable/outfit@^5.2.0",
+        "npm:@fontsource-variable/google-sans@^5.2.1",
         "npm:@netlify/blobs@10",
         "npm:@netlify/edge-functions@^2.11.0",
         "npm:@tailwindcss/vite@^4.1.0",
@@ -20,6 +19,7 @@
         "npm:@types/react-dom@^19.1.0",
         "npm:@types/react@^19.1.0",
         "npm:@vitejs/plugin-react@^4.5.0",
+        "npm:material-symbols@~0.45.8",
         "npm:motion@^12.15.0",
         "npm:qrcode@^1.5.4",
         "npm:react-dom@^19.1.0",

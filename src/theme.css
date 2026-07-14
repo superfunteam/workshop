@@ -31,8 +31,8 @@
   --color-note-lilac: #ddd0ff;
   --color-note-peach: #ffdcb4;
 
-  --font-display: 'Public Sans Variable', 'Public Sans', sans-serif;
-  --font-sans: 'Public Sans Variable', 'Public Sans', sans-serif;
+  --font-display: 'Google Sans Variable', 'Google Sans', sans-serif;
+  --font-sans: 'Google Sans Variable', 'Google Sans', sans-serif;
 
   /* Soft, lifted shadows — fun lives in the color and motion, not the ink. */
   --shadow-pop: 0 10px 24px -10px rgb(35 33 27 / 0.18), 0 2px 6px -2px rgb(35 33 27 / 0.08);

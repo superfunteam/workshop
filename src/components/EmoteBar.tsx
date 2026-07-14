@@ -1,13 +1,16 @@
-// The always-there reaction bar on participant screens.
+// The always-there reaction bar on participant screens. Every emoji is the
+// Noto art — still at rest, animating the moment you hover or press it.
 
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import { EMOTES } from '../../shared/emoji.ts';
 import { api } from '../lib/api.ts';
 import { BOUNCE } from '../lib/springs.ts';
+import AnimatedEmoji from './AnimatedEmoji.tsx';
 
 export default function EmoteBar({ code, pid }: { code: string; pid: string }) {
   const lastSent = useRef(0);
+  const [hot, setHot] = useState<string | null>(null);
 
   const send = (emoji: string) => {
     const now = Date.now();
@@ -32,10 +35,13 @@ export default function EmoteBar({ code, pid }: { code: string; pid: string }) {
             transition={BOUNCE}
             type="button"
             onClick={() => send(emoji)}
-            className="rounded-full px-1.5 py-1 text-2xl"
+            onPointerEnter={() => setHot(emoji)}
+            onPointerLeave={() => setHot((h) => (h === emoji ? null : h))}
+            onPointerDown={() => setHot(emoji)}
+            className="flex items-center rounded-full px-1.5 py-1"
             aria-label={`react ${emoji}`}
           >
-            {emoji}
+            <AnimatedEmoji emoji={emoji} size={30} paused={hot !== emoji} />
           </motion.button>
         ))}
       </div>
