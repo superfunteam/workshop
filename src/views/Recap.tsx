@@ -1,18 +1,21 @@
 // The permanent record: every question, every answer, forever — plus exports.
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { Snapshot } from '../../shared/types.ts';
 import { flatQuestions } from '../../shared/flow.ts';
+import { summarize } from '../../shared/aggregate.ts';
 import { api } from '../lib/api.ts';
 import { session } from '../lib/session.ts';
 import ResultsView from '../components/results/index.tsx';
+import SmartSummary from '../components/SmartSummary.tsx';
 import { TypeBadge } from '../components/bits.tsx';
 import Icon from '../components/Icon.tsx';
 
 export default function RecapView({ code }: { code: string }) {
   const [snap, setSnap] = useState<Snapshot | null>(null);
   const [missing, setMissing] = useState(false);
+  const [view, setView] = useState<'recap' | 'summary'>('recap');
   const hostKey = session.hostKey(code);
 
   useEffect(() => {
@@ -67,16 +70,38 @@ export default function RecapView({ code }: { code: string }) {
         <p className="mt-2 text-sm font-semibold text-ink-soft">
           {new Date(snap.config.createdAt).toLocaleDateString(undefined, { dateStyle: 'long' })} · room {code}
         </p>
-        <div className="mt-5 flex flex-wrap justify-center gap-2">
-          <a className="btn-pop bg-ink text-white hover:bg-ink/90" href={api.exportUrl(code, 'md')}><Icon name="download" size={16} /> Markdown</a>
-          <a className="btn-pop" href={api.exportUrl(code, 'csv')}><Icon name="download" size={16} /> CSV</a>
+        <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
+          <DownloadMenu code={code} />
           {hostKey && (
             <button type="button" className="btn-pop" onClick={() => void duplicate()}>
               <Icon name="library_add" size={16} /> Duplicate as template
             </button>
           )}
         </div>
+
+        {/* view toggle — the full recap is the default */}
+        <div className="mt-6 inline-flex rounded-full border border-line bg-white p-1 shadow-pop-sm">
+          <button
+            type="button"
+            className={`cursor-pointer rounded-full px-4 py-1.5 text-sm font-semibold transition-colors ${view === 'recap' ? 'bg-ink text-white' : 'text-ink-soft hover:text-ink'}`}
+            onClick={() => setView('recap')}
+          >
+            <Icon name="description" size={15} /> Full recap
+          </button>
+          <button
+            type="button"
+            className={`cursor-pointer rounded-full px-4 py-1.5 text-sm font-semibold transition-colors ${view === 'summary' ? 'bg-ink text-white' : 'text-ink-soft hover:text-ink'}`}
+            onClick={() => setView('summary')}
+          >
+            <Icon name="auto_awesome" size={15} /> Smart Summary
+          </button>
+        </div>
       </header>
+
+      {view === 'summary' && <SmartSummary code={code} hostKey={hostKey} />}
+
+      {view === 'recap' && (
+      <>
 
       <section className="card-pop mb-10 grid grid-cols-2 gap-4 p-6 text-center sm:grid-cols-4">
         <Stat n={people.length} label="people" />
@@ -105,8 +130,17 @@ export default function RecapView({ code }: { code: string }) {
         </div>
       </section>
 
+      {/* jump straight to a section */}
+      <nav className="mb-10 flex flex-wrap justify-center gap-1.5">
+        {snap.config.sections.map((sec) => (
+          <a key={sec.id} href={`#sec-${sec.id}`} className="chip text-xs hover:bg-ink/5">
+            <Icon name="arrow_downward" size={12} /> {sec.title}
+          </a>
+        ))}
+      </nav>
+
       {snap.config.sections.map((sec) => (
-        <section key={sec.id} className="mb-12">
+        <section key={sec.id} id={`sec-${sec.id}`} className="mb-12 scroll-mt-6">
           <h2 className="display-type mb-6 border-b-2 border-line pb-2 text-3xl">{sec.title}</h2>
           <div className="flex flex-col gap-10">
             {sec.questions.map((q) => (
@@ -116,6 +150,9 @@ export default function RecapView({ code }: { code: string }) {
                   {q.anonymous && <span className="chip bg-note-pink/60 text-xs"><Icon name="visibility_off" size={14} /> anonymous</span>}
                   <span className="text-xs font-semibold text-ink-soft">
                     {snap.answers[q.id]?.answeredPids.length ?? 0} answered
+                  </span>
+                  <span className="text-xs font-medium text-ink-faint">
+                    {summarize(q, snap.answers[q.id]?.answers ?? [])}
                   </span>
                 </div>
                 <h3 className="display-type mb-4 text-2xl">{q.prompt}</h3>
@@ -132,10 +169,49 @@ export default function RecapView({ code }: { code: string }) {
           <p className="text-base leading-relaxed whitespace-pre-wrap">{snap.scratch}</p>
         </section>
       )}
+      </>
+      )}
 
       <footer className="pb-10 text-center">
         <Link to="/" className="text-sm font-semibold text-ink-soft underline">← Home</Link>
       </footer>
+    </div>
+  );
+}
+
+function DownloadMenu({ code }: { code: string }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const close = (e: MouseEvent) => {
+      if (!ref.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('click', close);
+    return () => document.removeEventListener('click', close);
+  }, []);
+  return (
+    <div className="relative" ref={ref}>
+      <button type="button" className="btn-pop bg-ink text-white hover:bg-ink/90" onClick={() => setOpen(!open)}>
+        <Icon name="download" size={16} /> Download <Icon name={open ? 'expand_less' : 'expand_more'} size={16} />
+      </button>
+      {open && (
+        <div className="card-pop absolute top-full left-1/2 z-40 mt-1.5 w-64 -translate-x-1/2 p-2 text-left">
+          <a href={api.exportUrl(code, 'md')} className="flex items-center gap-2.5 rounded-xl px-2.5 py-2 hover:bg-ink/[0.04]" onClick={() => setOpen(false)}>
+            <Icon name="article" size={17} className="text-ink-soft" />
+            <span className="min-w-0 flex-1">
+              <span className="block text-sm font-semibold">Markdown</span>
+              <span className="block text-xs font-medium text-ink-soft">the whole session as a doc</span>
+            </span>
+          </a>
+          <a href={api.exportUrl(code, 'csv')} className="flex items-center gap-2.5 rounded-xl px-2.5 py-2 hover:bg-ink/[0.04]" onClick={() => setOpen(false)}>
+            <Icon name="table" size={17} className="text-ink-soft" />
+            <span className="min-w-0 flex-1">
+              <span className="block text-sm font-semibold">CSV</span>
+              <span className="block text-xs font-medium text-ink-soft">one row per answer, for spreadsheets</span>
+            </span>
+          </a>
+        </div>
+      )}
     </div>
   );
 }

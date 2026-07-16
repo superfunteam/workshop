@@ -1,4 +1,4 @@
-import type { AnswerValue, HostAction, RoomConfig, RoomSettings, Section } from '../../shared/types.ts';
+import type { AnswerValue, HostAction, RoomConfig, RoomSettings, Section, SummaryState } from '../../shared/types.ts';
 
 async function call<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(path, {
@@ -77,4 +77,9 @@ export const api = {
   },
 
   exportUrl: (code: string, format: 'md' | 'csv') => `/api/rooms/${code}/export?format=${format}`,
+
+  summary: (code: string) => call<SummaryState>(`/api/rooms/${code}/summary`),
+
+  generateSummary: (code: string, key: string) =>
+    post<SummaryState>(`/api/rooms/${code}/summary`, { key }),
 };

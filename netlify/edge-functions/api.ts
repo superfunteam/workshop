@@ -34,6 +34,7 @@ import {
 } from '../../shared/sanitize.ts';
 import { isAvatar, isEmote } from '../../shared/emoji.ts';
 import { toCsv, toMarkdown } from '../../shared/export.ts';
+import { generateSummary, readSummary } from './lib/summary.ts';
 import {
   ONLINE_WINDOW_MS,
   type EmoteEvent,
@@ -506,7 +507,7 @@ function syncStream(store: Store, code: string, role: Role, pid: string | undefi
 
 // ---------- router ----------
 
-export default async (req: Request, _context: Context): Promise<Response> => {
+export default async (req: Request, context: Context): Promise<Response> => {
   const url = new URL(req.url);
   const segments = url.pathname.replace(/^\/api\/?/, '').replace(/\/+$/, '').split('/');
   const store = workshopStore();
@@ -541,6 +542,8 @@ export default async (req: Request, _context: Context): Promise<Response> => {
         }
         case 'export':
           return await exportRoom(store, code, url.searchParams.get('format') ?? 'md');
+        case 'summary':
+          return json(await readSummary(store, code));
         case 'uploads':
           return await serveUpload(store, code, segments[3] ?? '');
         default:
@@ -564,6 +567,19 @@ export default async (req: Request, _context: Context): Promise<Response> => {
           return await duplicateRoom(store, code, await readJson(req));
         case 'upload':
           return await upload(store, code, req, url.searchParams.get('pid') ?? '');
+        case 'summary': {
+          const body = await readJson(req);
+          const config = await getConfig(store, code);
+          if (!config) return bad('room not found', 404);
+          if (typeof body.key !== 'string' || body.key !== config.hostKey) return bad('bad host key', 403);
+          const current = await readSummary(store, code);
+          if (current.status === 'running') return json(current);
+          const startedAt = Date.now();
+          await store.setJSON(k.summary(code), { status: 'running', startedAt });
+          // The model call outlives this response; pollers watch the blob.
+          context.waitUntil(generateSummary(store, code));
+          return json({ status: 'running', startedAt });
+        }
         default:
           return bad('not found', 404);
       }

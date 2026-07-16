@@ -273,6 +273,29 @@ export type HostAction =
   | { action: 'scratch'; text: string }
   | { action: 'autoReveal'; on: boolean };
 
+// ---------- smart summary (AI report over the whole session) ----------
+
+export interface SummaryReport {
+  headline: string;
+  room_read: string;
+  key_findings: Array<{ title: string; detail: string; evidence?: string }>;
+  agreements: string[];
+  tensions: string[];
+  weak_points: Array<{ title: string; detail: string }>;
+  action_items: Array<{ title: string; detail: string; effort: 'quick_win' | 'project' | 'big_bet' }>;
+  quotes: Array<{ text: string; why?: string }>;
+  section_notes: Array<{ section: string; note: string }>;
+}
+
+export interface SummaryState {
+  status: 'none' | 'running' | 'ready' | 'error';
+  startedAt?: number;
+  generatedAt?: number;
+  model?: string;
+  report?: SummaryReport;
+  error?: string;
+}
+
 // A participant is "in the room" if we heard from them this recently.
 export const ONLINE_WINDOW_MS = 25_000;
 // Participant heartbeat cadence.

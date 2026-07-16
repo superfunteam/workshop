@@ -40,6 +40,7 @@ export const k = {
   event: (code: string, ts: number) => `rooms/${code}/events/${ts}-${rid(6)}`,
   eventsPrefix: (code: string) => `rooms/${code}/events/`,
   upload: (code: string, id: string) => `rooms/${code}/uploads/${id}`,
+  summary: (code: string) => `rooms/${code}/summary`,
   roomPrefix: (code: string) => `rooms/${code}/`,
 };
 
