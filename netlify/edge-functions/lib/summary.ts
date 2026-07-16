@@ -135,28 +135,37 @@ export async function generateSummary(store: Store, code: string): Promise<void>
       throw new Error('AI Gateway is not available here. It activates on production deploys of sites on credit-based Netlify plans.');
     }
 
-    const res = await fetch(`${base.replace(/\/+$/, '')}/v1/messages`, {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-        'x-api-key': key,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
-        model: SUMMARY_MODEL,
-        max_tokens: 6000,
-        system: SYSTEM,
-        messages: [
-          {
-            role: 'user',
-            content: `Here is the complete record of today's workshop — every question, every answer with attribution, vote tallies, slider stats, the host's live scratchpad notes, and the room's emoji reactions.\n\n<workshop_record>\n${md}\n</workshop_record>\n\nSynthesize it into the report. Ground every claim in the record.`,
-          },
-        ],
-        tools: [REPORT_TOOL],
-        tool_choice: { type: 'tool', name: 'deliver_report' },
-      }),
+    const payload = JSON.stringify({
+      model: SUMMARY_MODEL,
+      max_tokens: 6000,
+      system: SYSTEM,
+      messages: [
+        {
+          role: 'user',
+          content: `Here is the complete record of today's workshop — every question, every answer with attribution, vote tallies, slider stats, the host's live scratchpad notes, and the room's emoji reactions.\n\n<workshop_record>\n${md}\n</workshop_record>\n\nSynthesize it into the report. Ground every claim in the record.`,
+        },
+      ],
+      tools: [REPORT_TOOL],
+      tool_choice: { type: 'tool', name: 'deliver_report' },
     });
 
+    // Overloaded/rate-limited responses are transient — retry with backoff.
+    // waitUntil keeps us alive; the client is polling, not waiting on us.
+    let res: Response | null = null;
+    for (let attempt = 0; attempt < 4; attempt++) {
+      if (attempt > 0) await new Promise((r) => setTimeout(r, [5_000, 15_000, 30_000][attempt - 1]));
+      res = await fetch(`${base.replace(/\/+$/, '')}/v1/messages`, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          'x-api-key': key,
+          'anthropic-version': '2023-06-01',
+        },
+        body: payload,
+      });
+      if (res.ok || ![429, 500, 502, 503, 529].includes(res.status)) break;
+    }
+    if (!res) throw new Error('no response from AI Gateway');
     if (!res.ok) {
       const detail = (await res.text()).slice(0, 300);
       throw new Error(`AI Gateway returned ${res.status}. ${detail}`);
