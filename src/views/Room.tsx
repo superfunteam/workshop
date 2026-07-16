@@ -156,23 +156,39 @@ function LiveRoom({ code, identity }: { code: string; identity: Identity }) {
   }
 
   const { state, config } = snapshot;
+  const flat = state.phase === 'live' ? currentQuestion(config, state) : null;
   return (
-    <div className="mx-auto flex min-h-dvh max-w-3xl flex-col px-5 pt-5 pb-28">
-      <header className="mb-6 flex items-center justify-between gap-3">
-        <div className="min-w-0">
-          <div className="truncate font-display text-lg font-semibold">{config.name}</div>
+    <div className="flex min-h-dvh flex-col pb-28">
+      {/* one sleek line: room · status · where we are · you */}
+      <header className="sticky top-0 z-30 border-b border-line bg-white/95 backdrop-blur">
+        <div className="flex w-full flex-wrap items-center gap-x-3 gap-y-1.5 px-4 py-2.5">
+          <span className="max-w-56 truncate font-display text-base font-semibold">{config.name}</span>
           <SyncDot status={status} />
-        </div>
-        <div className="flex items-center gap-2">
-          <TimerChip timer={state.timer} serverNow={serverNow} />
-          <span className="chip" title="in the room">
-            <Icon name="groups" size={16} /> {snapshot.participants.filter((p) => p.online).length}
+          {flat && (
+            <span className="flex flex-wrap items-center gap-1.5">
+              <span className="chip bg-ink/5 text-xs">{flat.section.title}</span>
+              <span className="chip text-xs tabular-nums">{flat.n + 1} of {flat.total}</span>
+              <TypeBadge type={flat.question.type} />
+              {flat.question.anonymous && (
+                <span className="chip bg-ink/5 text-xs">
+                  <Icon name="visibility_off" size={13} /> anonymous
+                </span>
+              )}
+            </span>
+          )}
+          <span className="ml-auto flex items-center gap-2">
+            <TimerChip timer={state.timer} serverNow={serverNow} />
+            <span className="chip" title="in the room">
+              <Icon name="groups" size={16} /> {snapshot.participants.filter((p) => p.online).length}
+            </span>
+            <span className="chip">{identity.avatar} {identity.name}</span>
           </span>
-          <span className="chip">{identity.avatar} {identity.name}</span>
         </div>
       </header>
 
-      <PhaseBody code={code} snapshot={snapshot} identity={identity} />
+      <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-5 pt-6">
+        <PhaseBody code={code} snapshot={snapshot} identity={identity} />
+      </main>
 
       <EmoteBar code={code} pid={identity.pid} />
       <EmoteLayer emotes={emotes} />
@@ -259,7 +275,7 @@ function QuestionStage({ code, snapshot, identity }: { code: string; snapshot: S
     );
   }
 
-  const { question, section, n, total } = flat;
+  const { question } = flat;
   const answeredPids = questionAnswers?.answeredPids ?? [];
   const iAnswered = answeredPids.includes(identity.pid);
   const stillThinking = waitingOn(snapshot.participants, answeredPids);
@@ -278,13 +294,6 @@ function QuestionStage({ code, snapshot, identity }: { code: string; snapshot: S
         transition={SLIDE}
         className="flex flex-1 flex-col"
       >
-        <div className="mb-5 flex flex-wrap items-center gap-2">
-          <span className="chip bg-note-lilac/60">{section.title}</span>
-          <span className="chip">{n + 1} of {total}</span>
-          <TypeBadge type={question.type} />
-          {question.anonymous && <span className="chip bg-note-pink/60"><Icon name="visibility_off" size={14} /> anonymous</span>}
-        </div>
-
         {question.type === 'slide' ? (
           <SlideMoment question={question} />
         ) : (

@@ -28,6 +28,15 @@ export default function PostitsInput({
   latest.current = notes;
   const columnRefs = useRef<Array<HTMLDivElement | null>>([]);
 
+  // Notes that have already popped in once. A note moving between columns
+  // remounts in the new list — it must NOT replay the entrance animation
+  // (that's the split-second disappearance on drop); the layoutId FLIP
+  // carries it over instead.
+  const everSeen = useRef<Set<string>>(new Set((value?.notes ?? []).map((n) => n.id)));
+  useEffect(() => {
+    for (const n of notes) everSeen.current.add(n.id);
+  }, [notes]);
+
   // Refresh from the server copy if it has more than we do (another tab, refresh).
   useEffect(() => {
     if (value && value.notes.length > latest.current.length) setNotes(value.notes);
@@ -131,7 +140,7 @@ export default function PostitsInput({
                             recategorize(n.id, target);
                           }
                         }}
-                        initial={{ scale: 0.4, rotate: -10, opacity: 0 }}
+                        initial={everSeen.current.has(n.id) ? false : { scale: 0.4, rotate: -10, opacity: 0 }}
                         animate={{ scale: 1, rotate: tiltDeg(n.id), opacity: 1 }}
                         exit={{ scale: 0.4, opacity: 0, transition: { duration: 0.12 } }}
                         transition={BOUNCE}
