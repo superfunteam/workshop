@@ -2,6 +2,7 @@ import { motion } from 'motion/react';
 import type { InspoQuestion } from '../../../shared/types.ts';
 import { inspoItems } from '../../../shared/aggregate.ts';
 import { BOUNCE } from '../../lib/springs.ts';
+import SiteCard from '../SiteCard.tsx';
 import { AuthorChip, type ResultsProps } from './index.tsx';
 
 export default function InspoResults({ question, answers, participants, big }: ResultsProps<InspoQuestion>) {
@@ -21,14 +22,8 @@ export default function InspoResults({ question, answers, participants, big }: R
           className="relative mb-4 cursor-grab break-inside-avoid"
         >
           {item.kind === 'link' ? (
-            <a
-              href={item.url}
-              target="_blank"
-              rel="noreferrer"
-              className="card-pop block bg-note-sky/40 p-4 font-semibold break-all hover:bg-note-sky/70"
-              draggable={false}
-            >
-              🔗 {item.url.replace(/^https?:\/\//, '').slice(0, 90)}
+            <a href={item.url} target="_blank" rel="noreferrer" draggable={false} className="block transition-transform hover:-translate-y-0.5">
+              <SiteCard url={item.url} />
             </a>
           ) : (
             <img src={item.url} alt={item.note ?? ''} loading="lazy" className="card-pop w-full p-1.5" draggable={false} />

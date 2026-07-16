@@ -7,6 +7,7 @@ import type { InspoItem, InspoQuestion, InspoValue } from '../../../shared/types
 import { rid } from '../../../shared/codes.ts';
 import { api } from '../../lib/api.ts';
 import { BOUNCE } from '../../lib/springs.ts';
+import SiteCard from '../SiteCard.tsx';
 
 const IMAGE_RE = /\.(png|jpe?g|gif|webp|avif|svg)(\?|#|$)/i;
 
@@ -84,7 +85,7 @@ export default function InspoInput({
             if (e.key === 'Enter') addUrl();
           }}
         />
-        <button type="button" className="btn-pop bg-sun" disabled={!draft.trim()} onClick={addUrl}>
+        <button type="button" className="btn-pop bg-ink text-white hover:bg-ink/90" disabled={!draft.trim()} onClick={addUrl}>
           Pin it
         </button>
       </div>
@@ -112,13 +113,8 @@ export default function InspoInput({
             className="group relative mb-3 break-inside-avoid"
           >
             {item.kind === 'link' ? (
-              <a
-                href={item.url}
-                target="_blank"
-                rel="noreferrer"
-                className="card-pop block p-3 text-sm font-semibold break-all hover:bg-note-sky/40"
-              >
-                🔗 {item.url.replace(/^https?:\/\//, '').slice(0, 80)}
+              <a href={item.url} target="_blank" rel="noreferrer" draggable={false} className="block">
+                <SiteCard url={item.url} />
               </a>
             ) : (
               <img

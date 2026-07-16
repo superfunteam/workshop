@@ -186,7 +186,11 @@ function LiveRoom({ code, identity }: { code: string; identity: Identity }) {
         </div>
       </header>
 
-      <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-5 pt-6">
+      <main
+        className={`mx-auto flex w-full flex-1 flex-col px-5 pt-6 ${
+          flat && ['postits', 'inspo', 'slider'].includes(flat.question.type) ? 'max-w-6xl' : 'max-w-3xl'
+        }`}
+      >
         <PhaseBody code={code} snapshot={snapshot} identity={identity} />
       </main>
 

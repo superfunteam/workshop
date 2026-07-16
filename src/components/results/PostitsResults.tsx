@@ -24,7 +24,7 @@ export default function PostitsResults({ question, answers, participants, big }:
             {group.category}
             <span className="font-sans text-sm font-semibold text-ink-soft">{group.notes.length}</span>
           </h3>
-          <div className="flex flex-col gap-3">
+          <div className="grid grid-cols-2 content-start gap-2.5">
             {group.notes.map((note, i) => {
               const author = question.anonymous ? null : personFor(participants, note.pid);
               return (
@@ -37,12 +37,12 @@ export default function PostitsResults({ question, answers, participants, big }:
                   initial={{ scale: 0.4, rotate: -12, opacity: 0 }}
                   animate={{ scale: 1, rotate: tiltDeg(note.id), opacity: 1 }}
                   transition={{ ...BOUNCE, delay: Math.min(i * 0.06, 0.5) }}
-                  className={`sticky-note cursor-grab ${big ? 'text-2xl' : ''}`}
+                  className={`sticky-note aspect-[3/2] cursor-grab ${big ? 'text-xl' : ''}`}
                   style={{ background: noteColor(group.index) }}
                 >
                   {note.text}
                   {author && (
-                    <div className="mt-1 text-right font-sans text-[10px] font-semibold text-ink/50">
+                    <div className="absolute right-2.5 bottom-1.5 font-sans text-[10px] font-semibold text-ink/50">
                       {author.avatar} {author.name}
                     </div>
                   )}
@@ -50,7 +50,7 @@ export default function PostitsResults({ question, answers, participants, big }:
               );
             })}
             {group.notes.length === 0 && (
-              <p className="py-4 text-center font-semibold text-base text-ink-faint">nothing here yet</p>
+              <p className="col-span-2 py-4 text-center font-semibold text-base text-ink-faint">nothing here yet</p>
             )}
           </div>
         </section>

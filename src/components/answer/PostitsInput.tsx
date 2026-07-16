@@ -117,7 +117,7 @@ export default function PostitsInput({
               style={{ background: `${noteColor(ci)}33` }}
             >
               <h3 className="display-type text-xl">{category}</h3>
-              <div className="flex flex-1 flex-col gap-3">
+              <div className="grid flex-1 content-start grid-cols-2 gap-2.5">
                 <AnimatePresence mode="popLayout">
                   {notes
                     .filter((n) => n.category === ci)
@@ -144,7 +144,7 @@ export default function PostitsInput({
                         animate={{ scale: 1, rotate: tiltDeg(n.id), opacity: 1 }}
                         exit={{ scale: 0.4, opacity: 0, transition: { duration: 0.12 } }}
                         transition={BOUNCE}
-                        className="sticky-note group cursor-grab"
+                        className="sticky-note group aspect-[3/2] cursor-grab"
                         style={{ background: noteColor(ci) }}
                       >
                         {n.text}
