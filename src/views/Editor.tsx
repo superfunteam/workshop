@@ -161,22 +161,24 @@ export default function Editor({ code }: { code: string }) {
         {draft.sections.map((section, sIdx) => (
           <section key={section.id} className="group/section mb-2">
             {/* section header */}
-            <div className="mb-2 flex items-center gap-2 pt-4">
-              <span className="text-[11px] font-semibold tracking-widest text-ink-faint uppercase">
-                Section {sIdx + 1}
-              </span>
-              <input
-                className="display-type min-w-0 flex-1 rounded-lg bg-transparent px-2 py-0.5 text-lg outline-none hover:bg-ink/[0.04] focus:bg-ink/[0.04]"
-                value={section.title}
-                maxLength={120}
-                aria-label={`section ${sIdx + 1} title`}
-                onChange={(e) =>
-                  update((d) => ({
-                    ...d,
-                    sections: d.sections.map((s, i) => (i === sIdx ? { ...s, title: e.target.value } : s)),
-                  }))
-                }
-              />
+            <div className="mb-2.5 flex items-end gap-2 pt-5">
+              <div className="min-w-0 flex-1">
+                <div className="px-2 text-[11px] font-semibold tracking-widest text-ink-faint uppercase">
+                  Section {sIdx + 1}
+                </div>
+                <input
+                  className="display-type w-full min-w-0 rounded-lg bg-transparent px-2 py-0.5 text-2xl outline-none hover:bg-ink/[0.04] focus:bg-ink/[0.04]"
+                  value={section.title}
+                  maxLength={120}
+                  aria-label={`section ${sIdx + 1} title`}
+                  onChange={(e) =>
+                    update((d) => ({
+                      ...d,
+                      sections: d.sections.map((s, i) => (i === sIdx ? { ...s, title: e.target.value } : s)),
+                    }))
+                  }
+                />
+              </div>
               <HoverControls
                 onUp={sIdx > 0 ? () => update((d) => ({ ...d, sections: moveIn(d.sections, sIdx, -1) })) : undefined}
                 onDown={sIdx < draft.sections.length - 1 ? () => update((d) => ({ ...d, sections: moveIn(d.sections, sIdx, 1) })) : undefined}
@@ -471,7 +473,6 @@ function QuestionCard({
       className="group/row overflow-hidden rounded-2xl border bg-white transition-shadow"
       style={{
         borderColor: open ? `${meta.hue}66` : 'var(--color-line)',
-        borderLeft: `4px solid ${meta.hue}`,
         boxShadow: open ? `0 8px 24px -10px ${meta.hue}55` : undefined,
       }}
     >
