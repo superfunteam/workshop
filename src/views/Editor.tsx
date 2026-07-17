@@ -500,7 +500,6 @@ function QuestionCard({
           </span>
         </span>
         {question.anonymous && <Icon name="visibility_off" size={15} className="shrink-0 text-ink-faint" />}
-        {question.notes && <Icon name="description" size={15} className="shrink-0 text-ink-faint" />}
         <span onClick={(e) => e.stopPropagation()}>
           <HoverControls onUp={onUp} onDown={onDown} onDelete={onDelete} onDuplicate={onDuplicate} />
         </span>
