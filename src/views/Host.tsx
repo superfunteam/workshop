@@ -344,9 +344,17 @@ function Console({ code, hostKey }: { code: string; hostKey: string }) {
           {state.phase === 'ended' && (
             <div className="card-pop bg-note-mint/40 p-6 text-center">
               <p className="display-type text-2xl">Workshop ended 🎬</p>
-              <p className="mt-2 font-semibold text-ink-soft">
-                Everything’s saved. Grab the exports above or open the <Link className="underline" to={`/recap/${code}`}>full recap</Link>.
+              <p className="mt-2 font-medium text-ink-soft">
+                Everything’s saved — every answer, note, and reaction.
               </p>
+              <div className="mt-4 flex flex-wrap justify-center gap-2">
+                <Link to={`/recap/${code}?view=summary`} className="btn-pop bg-ink text-white hover:bg-ink/90">
+                  <Icon name="auto_awesome" size={16} /> Smart Summary
+                </Link>
+                <Link to={`/recap/${code}`} className="btn-pop">
+                  <Icon name="description" size={16} /> Full recap
+                </Link>
+              </div>
             </div>
           )}
         </main>

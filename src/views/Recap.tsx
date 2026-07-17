@@ -1,7 +1,7 @@
 // The permanent record: every question, every answer, forever — plus exports.
 
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import type { Snapshot } from '../../shared/types.ts';
 import { flatQuestions } from '../../shared/flow.ts';
 import { summarize } from '../../shared/aggregate.ts';
@@ -15,7 +15,8 @@ import Icon from '../components/Icon.tsx';
 export default function RecapView({ code }: { code: string }) {
   const [snap, setSnap] = useState<Snapshot | null>(null);
   const [missing, setMissing] = useState(false);
-  const [view, setView] = useState<'recap' | 'summary'>('recap');
+  const [params] = useSearchParams();
+  const [view, setView] = useState<'recap' | 'summary'>(params.get('view') === 'summary' ? 'summary' : 'recap');
   const hostKey = session.hostKey(code);
 
   useEffect(() => {
