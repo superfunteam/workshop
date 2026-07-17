@@ -91,7 +91,8 @@ export function useRoom(code: string, opts: Options): RoomSync {
         ingest((await res.json()) as Snapshot);
         setStatus((s) => (s === 'polling' || s === 'offline' ? 'polling' : s));
       } catch {
-        if (!disposed) setStatus('offline');
+        // Don't let one failed catch-up fetch scare the UI while SSE is fine.
+        if (!disposed) setStatus((s) => (s === 'live' ? s : 'offline'));
       }
     };
 
@@ -155,8 +156,19 @@ export function useRoom(code: string, opts: Options): RoomSync {
 
     connectSSE();
 
+    // A tab waking up (phone unlock, laptop lid, tab switch) shouldn't wait
+    // out the EventSource retry timer: grab the freshest snapshot right now,
+    // and rebuild the stream if it died while we were hidden.
+    const onWake = () => {
+      if (disposed || document.visibilityState !== 'visible') return;
+      void pollOnce();
+      if (source && source.readyState === EventSource.CLOSED) connectSSE();
+    };
+    document.addEventListener('visibilitychange', onWake);
+
     return () => {
       disposed = true;
+      document.removeEventListener('visibilitychange', onWake);
       source?.close();
       stopPolling();
       if (probeTimer !== undefined) clearInterval(probeTimer);

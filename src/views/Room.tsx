@@ -13,6 +13,7 @@ import AnimatedEmoji from '../components/AnimatedEmoji.tsx';
 import { api } from '../lib/api.ts';
 import { session, type Identity } from '../lib/session.ts';
 import { useRoom } from '../lib/useRoom.ts';
+import { useWakeLock } from '../lib/useWakeLock.ts';
 import { useCelebrations } from '../lib/celebrate.ts';
 import AnswerInput, { MULTI_ITEM_TYPES } from '../components/answer/index.tsx';
 import ResultsView from '../components/results/index.tsx';
@@ -136,6 +137,7 @@ function LiveRoom({ code, identity }: { code: string; identity: Identity }) {
     heartbeat: true,
   });
   useCelebrations(snapshot);
+  useWakeLock();
 
   if (status === 'gone' || (!snapshot && status === 'offline')) {
     return (
@@ -159,6 +161,11 @@ function LiveRoom({ code, identity }: { code: string; identity: Identity }) {
   const flat = state.phase === 'live' ? currentQuestion(config, state) : null;
   return (
     <div className="flex min-h-dvh flex-col pb-28">
+      {status === 'offline' && (
+        <div className="fixed inset-x-0 top-0 z-50 bg-ink py-1.5 text-center text-sm font-semibold text-white">
+          Connection hiccup — reconnecting<span className="animate-pulse">…</span> your answers are safe
+        </div>
+      )}
       {/* one sleek line: room · status · where we are · you */}
       <header className="sticky top-0 z-30 border-b border-line bg-white/95 backdrop-blur">
         <div className="flex w-full flex-wrap items-center gap-x-3 gap-y-1.5 px-4 py-2.5">

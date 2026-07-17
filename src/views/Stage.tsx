@@ -9,6 +9,7 @@ import { SLIDE } from '../lib/springs.ts';
 import { DiscussMoment, SlideMoment } from '../components/TalkMoment.tsx';
 import AnimatedEmoji from '../components/AnimatedEmoji.tsx';
 import { useRoom } from '../lib/useRoom.ts';
+import { useWakeLock } from '../lib/useWakeLock.ts';
 import { useCelebrations } from '../lib/celebrate.ts';
 import ResultsView from '../components/results/index.tsx';
 import EmoteLayer from '../components/EmoteLayer.tsx';
@@ -20,6 +21,7 @@ import Icon from '../components/Icon.tsx';
 export default function StageView({ code }: { code: string }) {
   const { snapshot, status, emotes, serverNow } = useRoom(code, { stage: true });
   useCelebrations(snapshot);
+  useWakeLock();
 
   if (!snapshot) {
     return (

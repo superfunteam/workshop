@@ -145,7 +145,18 @@ Everything is archived by construction — the recap page and exports read the s
 
 **Presence semantics tightened**: "in the room" now means the tab is actually visible. Hiding the tab (checking email) marks you away immediately — the room never waits on someone who isn't looking — and refocusing brings you back within a heartbeat.
 
-## 11. Out of scope (v1)
+## 11. Addendum (2026-07-17): live-demo hardening pass
+
+Pre-flight for running this with real clients in the room:
+
+- **Crash shield**: a root error boundary (`ErrorShield` in `App.tsx`) catches any unexpected render error and shows a calm "reload and you're right back" card instead of a white screen. All session state is server-side, so reload always recovers.
+- **Wake locks**: host console, stage, and participant room all hold a screen wake lock (`useWakeLock`) — the projector and everyone's phones stay awake for the whole session. Progressive enhancement; browsers without the API are unchanged.
+- **Instant wake-up**: when a tab becomes visible again (phone unlock, laptop lid), the sync engine fetches a fresh snapshot immediately and rebuilds the SSE stream if it died in the background — no waiting out reconnect timers. A failed background catch-up no longer flashes "offline" while the stream is healthy.
+- **Loud reconnect state**: participants get a full-width "Connection hiccup — reconnecting… your answers are safe" banner when truly offline (the tiny sync dot stays for the nerds).
+- **Presenter remote / keyboard**: on the host console, →/PageDown advances (starts the show from the lobby, ends a break), ←/PageUp goes back, R toggles reveal. Presentation clickers emit exactly these keys. Ignored while typing in any input, and legacy `Right`/`Left` key names are accepted.
+- **Safe areas**: the emote bar clears the iPhone home indicator (`env(safe-area-inset-bottom)`).
+
+## 12. Out of scope (v1)
 
 - Auth/accounts, multi-team tenancy
 - Free-form canvas (real FigJam) — we're a facilitated question flow, deliberately

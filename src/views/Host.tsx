@@ -13,6 +13,7 @@ import { DiscussMoment, SlideMoment } from '../components/TalkMoment.tsx';
 import { api } from '../lib/api.ts';
 import { session } from '../lib/session.ts';
 import { useRoom } from '../lib/useRoom.ts';
+import { useWakeLock } from '../lib/useWakeLock.ts';
 import { useCelebrations } from '../lib/celebrate.ts';
 import ResultsView from '../components/results/index.tsx';
 import EmoteLayer from '../components/EmoteLayer.tsx';
@@ -72,6 +73,7 @@ function NeedKey({ code, onKey }: { code: string; onKey: (k: string) => void }) 
 function Console({ code, hostKey }: { code: string; hostKey: string }) {
   const { snapshot, status, emotes, serverNow } = useRoom(code, { hostKey });
   useCelebrations(snapshot);
+  useWakeLock();
   const [busy, setBusy] = useState(false);
 
   const act = useMemo(
@@ -91,6 +93,42 @@ function Console({ code, hostKey }: { code: string; hostKey: string }) {
   useEffect(() => {
     if (snapshot) session.touchRecent({ code, name: snapshot.config.name, role: 'host' });
   }, [code, snapshot?.config.name]);
+
+  // Presenter-remote friendly: clickers send arrow or page keys. →/PgDn
+  // advances (and starts from the lobby, and ends a break), ←/PgUp goes back,
+  // R toggles reveal. Ignored while typing in the scratchpad or any input.
+  const snapRef = useRef(snapshot);
+  snapRef.current = snapshot;
+  const busyRef = useRef(busy);
+  busyRef.current = busy;
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;
+      const t = e.target as HTMLElement | null;
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return;
+      const snap = snapRef.current;
+      if (!snap?.isHost || busyRef.current) return;
+      const { phase } = snap.state;
+      const flat = currentQuestion(snap.config, snap.state);
+      const qid = flat?.question.id ?? '';
+      const go = (a: HostAction) => {
+        e.preventDefault();
+        void act(a);
+      };
+      // 'Right'/'Left' are the legacy names some remotes and browsers emit.
+      if (e.key === 'ArrowRight' || e.key === 'Right' || e.key === 'PageDown') {
+        if (phase === 'lobby') go({ action: 'start' });
+        else if (phase === 'live') go({ action: 'next' });
+        else if (phase === 'break') go({ action: 'phase', phase: 'live' });
+      } else if (e.key === 'ArrowLeft' || e.key === 'Left' || e.key === 'PageUp') {
+        if (phase === 'live') go({ action: 'prev' });
+      } else if ((e.key === 'r' || e.key === 'R') && phase === 'live' && qid && !isTalkType(flat!.question.type)) {
+        go(snap.state.revealed[qid] ? { action: 'reopen', qid } : { action: 'reveal', qid });
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [act]);
 
   if (snapshot && !snapshot.isHost) {
     return (
@@ -289,6 +327,9 @@ function Console({ code, hostKey }: { code: string; hostKey: string }) {
                       <motion.button whileTap={{ scale: 0.95 }} type="button" className="btn-pop bg-ink text-white hover:bg-ink/90 px-3 py-1 text-sm" disabled={busy} onClick={() => void act({ action: 'next' })}>
                         Next →
                       </motion.button>
+                      <span className="hidden text-[11px] font-semibold text-ink-faint lg:inline" title="Presentation clickers work too — they send these keys">
+                        ⌨ arrows advance · R reveals
+                      </span>
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-1.5">

@@ -24,7 +24,7 @@ export default function EmoteBar({ code, pid }: { code: string; pid: string }) {
       initial={{ y: 24 }}
       animate={{ y: 0 }}
       transition={{ ...BOUNCE, delay: 0.25 }}
-      className="fixed bottom-4 left-1/2 z-40 -translate-x-1/2"
+      className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] left-1/2 z-40 -translate-x-1/2"
     >
       <div className="card-pop flex items-center gap-1 rounded-full! px-3 py-1.5">
         {EMOTES.map((emoji) => (
