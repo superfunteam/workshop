@@ -3,9 +3,10 @@
 // strategy report. Generation outlives any single request, so this component
 // polls open-endedly until the report lands.
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { Component, useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { motion } from 'motion/react';
 import type { SummaryReport, SummaryState } from '../../shared/types.ts';
+import { normalizeReport } from '../../shared/report.ts';
 import { api } from '../lib/api.ts';
 import { BOUNCE, riseChild, staggerParent } from '../lib/springs.ts';
 import { dataColor } from './bits.tsx';
@@ -77,15 +78,26 @@ export default function SmartSummary({ code, hostKey }: { code: string; hostKey:
   if (state.status === 'running') return <Thinking />;
 
   if (state.status === 'ready' && state.report) {
-    return (
-      <Report
-        report={state.report}
-        model={state.model}
-        generatedAt={state.generatedAt}
-        onRegenerate={hostKey ? generate : undefined}
-        regenBusy={kicking}
-      />
-    );
+    // Reports stored before validation existed (or from degraded model output)
+    // get coerced here; anything truly unusable falls through to the pitch card.
+    const report = normalizeReport(state.report);
+    if (report) {
+      return (
+        <ReportBoundary
+          fallback={
+            <BrokenReport onRegenerate={hostKey ? generate : undefined} busy={kicking} />
+          }
+        >
+          <Report
+            report={report}
+            model={state.model}
+            generatedAt={state.generatedAt}
+            onRegenerate={hostKey ? generate : undefined}
+            regenBusy={kicking}
+          />
+        </ReportBoundary>
+      );
+    }
   }
 
   // none / error → the pitch card
@@ -117,6 +129,38 @@ export default function SmartSummary({ code, hostKey }: { code: string; hostKey:
         )}
       </div>
       <p className="mt-4 text-xs font-semibold text-ink-faint">Takes a minute or so · powered by Claude Opus via Netlify AI Gateway</p>
+    </div>
+  );
+}
+
+class ReportBoundary extends Component<{ children: ReactNode; fallback: ReactNode }, { broken: boolean }> {
+  state = { broken: false };
+  static getDerivedStateFromError() {
+    return { broken: true };
+  }
+  render() {
+    return this.state.broken ? this.props.fallback : this.props.children;
+  }
+}
+
+function BrokenReport({ onRegenerate, busy }: { onRegenerate?: () => Promise<void>; busy: boolean }) {
+  return (
+    <div className="card-pop mx-auto max-w-xl p-8 text-center">
+      <AnimatedEmoji emoji="🫠" size={64} />
+      <h2 className="display-type mt-3 text-2xl">That report came back scrambled</h2>
+      <p className="mx-auto mt-2 max-w-md text-sm font-medium text-ink-soft">
+        The model returned something we couldn't fully read. Regenerating usually fixes it.
+      </p>
+      {onRegenerate && (
+        <button
+          type="button"
+          className="btn-pop bg-ink text-white hover:bg-ink/90 mt-5"
+          disabled={busy}
+          onClick={() => void onRegenerate()}
+        >
+          <Icon name="refresh" size={16} /> {busy ? 'Starting…' : 'Regenerate'}
+        </button>
+      )}
     </div>
   );
 }

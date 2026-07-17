@@ -6,7 +6,8 @@
 import type { Store } from '@netlify/blobs';
 import { k, loadFullRoom } from './rooms.ts';
 import { toMarkdown } from '../../../shared/export.ts';
-import type { SummaryReport, SummaryState } from '../../../shared/types.ts';
+import type { SummaryState } from '../../../shared/types.ts';
+import { normalizeReport } from '../../../shared/report.ts';
 
 export const SUMMARY_MODEL = 'claude-opus-4-8';
 /** A 'running' state older than this is treated as interrupted. */
@@ -137,7 +138,7 @@ export async function generateSummary(store: Store, code: string): Promise<void>
 
     const payload = JSON.stringify({
       model: SUMMARY_MODEL,
-      max_tokens: 6000,
+      max_tokens: 10000,
       system: SYSTEM,
       messages: [
         {
@@ -170,13 +171,23 @@ export async function generateSummary(store: Store, code: string): Promise<void>
       const detail = (await res.text()).slice(0, 300);
       throw new Error(`AI Gateway returned ${res.status}. ${detail}`);
     }
-    const data = (await res.json()) as { content?: Array<{ type: string; input?: unknown }> };
+    const data = (await res.json()) as {
+      content?: Array<{ type: string; input?: unknown }>;
+      stop_reason?: string;
+    };
+    if (data.stop_reason === 'max_tokens') {
+      throw new Error('The report ran long and got cut off — hit regenerate.');
+    }
     const toolUse = data.content?.find((b) => b.type === 'tool_use');
     if (!toolUse?.input) throw new Error('The model returned no report — try again.');
 
+    // Models occasionally return degraded shapes; store only a clean report.
+    const report = normalizeReport(toolUse.input);
+    if (!report) throw new Error('The model returned an unusable report — hit regenerate.');
+
     const done: SummaryState = {
       status: 'ready',
-      report: toolUse.input as SummaryReport,
+      report,
       generatedAt: Date.now(),
       model: SUMMARY_MODEL,
     };
